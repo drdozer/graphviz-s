@@ -1,0 +1,5 @@
+GRAPHVIZ bindings from scala.
+
+This comprises of: an API and data model for the DOT file format; invocation of the commandline tooling.
+
+To call the graphviz binaries, you must have graphviz installed for your system.
