@@ -47,7 +47,9 @@ object CompassPt {
   case object Undefined extends CompassPt
 }
 
-case class AttributeStatement(statementType: StatementType, attributes1: Option[AttributeList], attributes2: Option[AttributeList]) extends Statement
+case class AttributeStatement(statementType: StatementType, attributeList: AttributeList) extends Statement
+
+case class AttributeList(attrs1: Option[Seq[AttributeAssignment]], attrs2: Option[Seq[AttributeAssignment]])
 
 sealed trait StatementType
 object StatementType {
