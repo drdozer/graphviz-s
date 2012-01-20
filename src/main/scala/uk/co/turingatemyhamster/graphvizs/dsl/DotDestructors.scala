@@ -5,14 +5,15 @@ trait DotDestructors extends Dot {
   // decomposers
 
   def decompose_graph(g: T_Graph): (Boolean, T_GraphType, Option[T_ID], Seq[T_Statement])
-  def decompose_nodeStatement(ns: T_NodeStatement): (T_NodeId, Option[Seq[T_AttributeAssignment]])
-  def decompose_edgeStatement(es: T_EdgeStatement): (T_Node, Seq[(T_EdgeOp, T_Node)], Option[Seq[T_AttributeAssignment]])
-  def decompose_attributeStatement(as: T_AttributeStatement): (T_StatementType, Option[Seq[T_AttributeAssignment]], Option[Seq[T_AttributeAssignment]])
+  def decompose_nodeStatement(ns: T_NodeStatement): (T_NodeId, Option[T_AttributeList])
+  def decompose_edgeStatement(es: T_EdgeStatement): (T_Node, Seq[(T_EdgeOp, T_Node)], Option[T_AttributeList])
+  def decompose_attributeStatement(as: T_AttributeStatement): (T_StatementType, T_AttributeList)
+  def decompose_assignmentStatement(as: T_AssignmentStatement): (T_ID, T_ID)
   def decompose_nodeId(nid: T_NodeId): (T_ID, Option[T_Port])
-  def decompose_port(p: T_Port): (T_ID, Option[T_CompassPt])
+  def decompose_port(p: T_Port): (Option[T_ID], Option[T_CompassPt])
   def decompose_attributeList(al: T_AttributeList): (Option[Seq[T_AttributeAssignment]], Option[Seq[T_AttributeAssignment]])
-  def decompose_attributeAssignment(as: T_AttributeAssignment): (T_ID, T_ID)
-  def decompose_subgraph(sg: T_Subgraph): (T_ID, Seq[T_Statement])
+  def decompose_attributeAssignment(as: T_AttributeAssignment): (T_ID, Option[T_ID])
+  def decompose_subgraph(sg: T_Subgraph): (Option[T_ID], Seq[T_Statement])
 }
 
 trait DotRenderer extends DotDestructors {
@@ -46,15 +47,34 @@ trait DotRenderer extends DotDestructors {
     nl
   }
 
+  def render_attributeList(al: T_AttributeList) {
+    val (attrs1, attrs2) = decompose_attributeList(al)
+
+    out append " ["
+    for(as <- attrs1) {
+      for(a <- as) {
+        space
+        render_attributeAssignment(a)
+      }
+    }
+    out append " ]"
+    for(as <- attrs2) {
+      space
+      for(a <- as) {
+        space
+        render_attributeAssignment(a)
+      }
+    }
+
+
+  }
+
   def render_nodeStatement(ns: T_NodeStatement) {
     val (node, attributes) = decompose_nodeStatement(ns)
 
     render_nodeId(node)
     for(as <- attributes) {
-      for(a <- as) {
-        space
-        render_attributeAssignment(a)
-      }
+      render_attributeList(as)
     }
   }
 
@@ -63,37 +83,29 @@ trait DotRenderer extends DotDestructors {
 
     render_node(node)
     for((op, n) <- nodes) {
+      space
       render_edgeOp(op)
       space
       render_node(n)
     }
     for(as <- attributes) {
-      for(a <- as) {
-        space
-        render_attributeAssignment(a)
-      }
+      render_attributeList(as)
     }
   }
 
   def render_attributeStatement(as: T_AttributeStatement) {
-    val (statementType, attributes1, attributes2) = decompose_attributeStatement(as)
+    val (statementType, attributes) = decompose_attributeStatement(as)
 
     render_statementType(statementType)
-    space
-    out append " ["
-    for(as <- attributes1) {
-      for(a <- as) {
-        space
-        render_attributeAssignment(a)
-      }
-    }
-    out append " ] "
-    for(as <- attributes2) {
-      for(a <- as) {
-        space
-        render_attributeAssignment(a)
-      }
-    }
+    render_attributeList(attributes)
+  }
+  
+  def render_assignmentStatement(as: T_AssignmentStatement) {
+    val (name, value) = decompose_assignmentStatement(as)
+    
+    render_id(name)
+    out append " = "
+    render_id(value)
   }
 
   def render_nodeId(nid: T_NodeId) {
@@ -106,28 +118,50 @@ trait DotRenderer extends DotDestructors {
     }
   }
 
+  def render_port(p: T_Port) {
+    val (id, compass_pt) = decompose_port(p)
+    
+    out append " : "
+    for(i <- id) {
+      render_id(i)
+      out append " : "
+    }
+    for(cp <- compass_pt) {
+      render_compass_pt(cp)
+    }
+
+  }
+
   def render_attributeAssignment(as: T_AttributeAssignment) {
     val (name, value) = decompose_attributeAssignment(as)
 
     render_id(name)
-    out append " = "
-    render_id(value)
+    for(v <- value) {
+      out append " = "
+      render_id(v)
+    }
+  }
+
+  def render_statementList(statements: scala.Seq[T_Statement]) {
+    for (s <- statements) {
+      render_statement(s)
+      nl
+    }
   }
 
   def render_subgraph(sg: T_Subgraph) {
     val (id, statements) = decompose_subgraph(sg)
 
     out append "subgraph"
-    space
-    render_id(id)
+    for(i <- id) {
+      space
+      render_id(i)
+    }
     space
     out append "{"
     if(! statements.isEmpty) {
       nl
-      for(s <- statements) {
-        render_statement(s)
-        nl
-      }
+      render_statementList(statements)
     }
     out append "}"
     nl
@@ -139,5 +173,5 @@ trait DotRenderer extends DotDestructors {
   def render_node(n: T_Node)
   def render_edgeOp(eo: T_EdgeOp)
   def render_statementType(st: T_StatementType)
-  def render_port(p: T_Port)
+  def render_compass_pt(cp: T_CompassPt)
 }

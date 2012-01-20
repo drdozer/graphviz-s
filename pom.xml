@@ -66,6 +66,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.scala-tools.testing</groupId>
+            <artifactId>scalacheck_2.9.1</artifactId>
+            <version>1.9</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

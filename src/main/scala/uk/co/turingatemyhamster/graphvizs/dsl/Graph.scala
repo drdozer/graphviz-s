@@ -18,6 +18,12 @@ object GraphType {
 sealed trait Statement
 
 case class NodeStatement(node: NodeId, attributes: Option[AttributeList]) extends Statement
+
+case object NodeStatement {
+  def apply(node: NodeId): NodeStatement = NodeStatement(node, None)
+  def apply(node: NodeId, attrs: AttributeList): NodeStatement = NodeStatement(node, Some(attrs))
+}
+
 case class EdgeStatement(node: Node, nodes: Seq[(EdgeOp, Node)], attributes: Option[AttributeList]) extends Statement
 
 sealed trait EdgeOp

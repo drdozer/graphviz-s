@@ -6,7 +6,7 @@ package uk.co.turingatemyhamster.graphvizs.dsl
  * @author Matthew Pocock
  */
 
-trait DotAst extends DotConstructors {
+trait DotAst extends Dot {
 
   // bind concrete types
   type T_Graph = Graph
@@ -31,6 +31,10 @@ trait DotAst extends DotConstructors {
   type T_GraphType = GraphType
   type T_ID = ID
 
+}
+
+trait DotAstConstructors extends DotAst with DotConstructors {
+
   // implicits to stop you gouging your own eyes out
   implicit def stringAsId(s: String): ID = ID.Identifier(s)
   
@@ -53,6 +57,7 @@ trait DotAst extends DotConstructors {
 
   implicit def idablePairAsAssignmentStatement[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AssignmentStatement
   = AssignmentStatement(a2Id(ab._1), b2Id(ab._2))
+
 }
 
 /**
@@ -60,7 +65,7 @@ trait DotAst extends DotConstructors {
  *
  * @author Matthew Pocock
  */
-trait DotAstBuilder extends DotAst {
+trait DotAstBuilder extends DotAstConstructors {
 
   def handle_graph(strict: Boolean, graphType: GraphType, id: Option[ID], statements: Seq[Statement]) =
     Graph(strict, graphType, id, statements)
@@ -137,4 +142,79 @@ class DotAstParser extends DotAstBuilder with DotParser {
     (w  ^^^ CompassPt.W)  |
     (nw ^^^ CompassPt.NW) |
     (id ^^ (CompassPt.or apply _))
+}
+
+class DotAstDestructors extends DotAst with DotDestructors {
+  def decompose_graph(g: Graph) = (g.strict, g.graphType, g.id, g.statements)
+
+  def decompose_nodeStatement(ns: NodeStatement) = (ns.node, ns.attributes)
+
+  def decompose_edgeStatement(es: EdgeStatement) = (es.node, es.nodes, es.attributes)
+
+  def decompose_attributeStatement(as: AttributeStatement) = (as.statementType, as.attributeList)
+
+  def decompose_assignmentStatement(as: AssignmentStatement) = (as.name, as.value)
+
+  def decompose_nodeId(nid: NodeId) = (nid.id, nid.port)
+
+  def decompose_port(p: Port) = (p.id, p.compassPt)
+
+  def decompose_attributeList(al: AttributeList) = (al.attrs1, al.attrs2)
+
+  def decompose_attributeAssignment(as: AttributeAssignment) = (as.name, as.value)
+
+  def decompose_subgraph(sg: Subgraph) = (sg.id, sg.statements)
+}
+
+class DotAstRenderer(val out: Appendable) extends DotAstDestructors with DotRenderer {
+  
+  private final val qt = "\""
+
+  def render_graphType(gt: GraphType) = out append (gt match {
+    case GraphType.Graph => "graph"
+    case GraphType.Digraph => "digraph"
+  })
+
+  def render_id(id: ID) = out append (id match {
+    case ID.Identifier(s) => s
+    case ID.Numeral(n) => n.toString
+    case ID.Quoted(s) => qt + s.toString + qt
+    case ID.Html(s) => s
+  })
+
+  def render_statement(st: Statement) = st match {
+    case ns : NodeStatement => render_nodeStatement(ns)
+    case es : EdgeStatement => render_edgeStatement(es)
+    case as : AttributeStatement => render_attributeStatement(as)
+    case as : AssignmentStatement => render_assignmentStatement(as)
+    case sg : Subgraph => render_subgraph(sg)
+  }
+
+  def render_node(n: Node) = n match {
+    case nid : NodeId => render_nodeId(nid)
+    case sg : Subgraph => render_subgraph(sg)
+  }
+
+  def render_edgeOp(eo: EdgeOp) = out append (eo match {
+    case EdgeOp.-> => "->"
+    case EdgeOp.-- => "--"
+  })
+
+  def render_statementType(st: StatementType) = out append (st match {
+    case StatementType.Graph => "graph"
+    case StatementType.Node => "node"
+    case StatementType.Edge => "edge"
+  })
+
+  def render_compass_pt(cp: CompassPt) = cp match {
+    case CompassPt.N => out append "n"
+    case CompassPt.NE => out append "ne"
+    case CompassPt.E => out append "e"
+    case CompassPt.SE => out append "se"
+    case CompassPt.S => out append "s"
+    case CompassPt.SW => out append "sw"
+    case CompassPt.W => out append "w"
+    case CompassPt.NW => out append "nw"
+    case CompassPt.or(id) => render_id(id)
+  }
 }

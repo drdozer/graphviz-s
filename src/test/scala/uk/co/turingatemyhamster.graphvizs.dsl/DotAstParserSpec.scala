@@ -150,8 +150,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
       
       "parse a node statement with one numeric attribute" in {
         node_statement must succeedOn("n1 [a = 3]").withResult(
-          NodeStatement("n1",
-            Some(AttributeList("a" -> 3))))
+          NodeStatement("n1", AttributeList("a" -> 3)))
       }
       
       "parse a directed edge statement with no attributes" in {
@@ -233,7 +232,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
         graph must succeedOn("""digraph {}""").withResult(Graph(false, GraphType.Digraph, None, Seq()))
       }
 
-      "parse a strict graph" in {
+      "parse a strict, empty graph" in {
         graph must succeedOn("""strict graph {}""").withResult(Graph(true, GraphType.Graph, None, Seq()))
       }
 
