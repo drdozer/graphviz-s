@@ -1,7 +1,6 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
 import org.specs2.mutable._
-import org.specs2.ScalaCheck
 import org.specs2.specification.Scope
 
 class DotAstRendererSpec extends Specification {
