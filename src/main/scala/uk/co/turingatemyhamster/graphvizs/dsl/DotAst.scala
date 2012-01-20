@@ -31,6 +31,28 @@ trait DotAst extends DotConstructors {
   type T_GraphType = GraphType
   type T_ID = ID
 
+  // implicits to stop you gouging your own eyes out
+  implicit def stringAsId(s: String): ID = ID.Identifier(s)
+  
+  implicit def doubleAsId(d: Double): ID = ID.Numeral(d)
+
+  implicit def intAsId(i: Int): ID = ID.Numeral(i.toDouble)
+  
+  implicit def idAsNodeId(id: ID): NodeId = NodeId(id, None)
+
+  implicit def idableAsNodeId[A](a: A)(implicit a2Id: A => ID): NodeId = idAsNodeId(a2Id(a))
+
+  implicit def idableAsAttributeAssignment[A](a: A)(implicit a2Id: A => ID): AttributeAssignment
+  = AttributeAssignment(a2Id(a))
+
+  implicit def idableAsNodeStatement[A](a: A)(implicit a2Id: A => ID): NodeStatement
+  = NodeStatement(a2Id(a), None)
+
+  implicit def idablePairAsAttributeAssignment[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AttributeAssignment
+  = AttributeAssignment(a2Id(ab._1), b2Id(ab._2))
+
+  implicit def idablePairAsAssignmentStatement[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AssignmentStatement
+  = AssignmentStatement(a2Id(ab._1), b2Id(ab._2))
 }
 
 /**
@@ -39,8 +61,6 @@ trait DotAst extends DotConstructors {
  * @author Matthew Pocock
  */
 trait DotAstBuilder extends DotAst {
-
-  type Dot[T] = T
 
   def handle_graph(strict: Boolean, graphType: GraphType, id: Option[ID], statements: Seq[Statement]) =
     Graph(strict, graphType, id, statements)
@@ -72,4 +92,49 @@ trait DotAstBuilder extends DotAst {
   def handle_subgraph(id: Option[ID], statements: Seq[Statement]) =
     Subgraph(id, statements)
 
+}
+
+class DotAstParser extends DotAstBuilder with DotParser {
+
+  lazy val id: Parser[ID]
+  = id_identifier | id_numeral | id_quoted_string
+
+
+  lazy val id_identifier: Parser[ID.Identifier]
+  = identifier ^^ { x => ID.Identifier(x) }
+
+  lazy val id_numeral: Parser[ID.Numeral]
+  = numeral ^^ { x => ID.Numeral(x.toDouble) }
+
+  lazy val id_quoted_string: Parser[ID.Quoted]
+  = dblquoted ^^ { x => ID.Quoted(x) }
+
+
+
+  lazy val statement_type: Parser[StatementType]
+  = (GRAPH ^^^ StatementType.Graph) |
+    (NODE ^^^ StatementType.Node) |
+    (EDGE ^^^ StatementType.Edge)
+
+
+  lazy val graph_type: Parser[GraphType]
+  = (GRAPH ^^^ GraphType.Graph) |
+    (DIGRAPH ^^^ GraphType.Digraph)
+
+
+  lazy val edge_op: Parser[EdgeOp]
+  = (directed_edge ^^^ EdgeOp.->) |
+    (undirected_edge ^^^ EdgeOp.--)
+
+
+  lazy val compass_pt: Parser[T_CompassPt]
+  = (n  ^^^ CompassPt.N)  |
+    (ne ^^^ CompassPt.NE) |
+    (e  ^^^ CompassPt.E)  |
+    (se ^^^ CompassPt.SE) |
+    (s  ^^^ CompassPt.S)  |
+    (sw ^^^ CompassPt.SW) |
+    (w  ^^^ CompassPt.W)  |
+    (nw ^^^ CompassPt.NW) |
+    (id ^^ (CompassPt.or apply _))
 }

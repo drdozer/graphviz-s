@@ -44,12 +44,18 @@ object CompassPt {
   case object W extends CompassPt
   case object NW extends CompassPt
   case object C extends CompassPt
-  case object Undefined extends CompassPt
+  case class or(id: ID) extends CompassPt
 }
 
 case class AttributeStatement(statementType: StatementType, attributeList: AttributeList) extends Statement
 
 case class AttributeList(attrs1: Option[Seq[AttributeAssignment]], attrs2: Option[Seq[AttributeAssignment]])
+
+object AttributeList {
+  def apply(): AttributeList = AttributeList(None, None)
+  def apply(attrs1: Option[Seq[AttributeAssignment]]): AttributeList = AttributeList(attrs1, None)
+  def apply(as: AttributeAssignment*): AttributeList = AttributeList(Some(as), None)
+}
 
 sealed trait StatementType
 object StatementType {
@@ -60,14 +66,26 @@ object StatementType {
 
 case class AttributeAssignment(name: ID, value: Option[ID]) // value=None ~> value=Some(true)
 
+object AttributeAssignment {
+  def apply(name: ID): AttributeAssignment = AttributeAssignment(name, None)
+  def apply(name: ID, value: ID): AttributeAssignment = AttributeAssignment(name, Some(value))
+}
+
 case class AssignmentStatement(name: ID,  value: ID) extends Statement
+
 case class Subgraph(id: Option[ID], statements: Seq[Statement]) extends Statement with Node
+
+object Subgraph {
+//  def apply(id: Option[ID], statements: Seq[Statement])
+  def apply(name: ID): Subgraph = Subgraph(Some(name), Seq())
+  def apply(aa: AssignmentStatement*): Subgraph = Subgraph(None, aa)
+}
 
 
 sealed trait ID
 object ID {
-  case class Identifier(value: String) // Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores ('_') or digits ([0-9]), not beginning with a digit
-  case class Numeral(value: Int) // a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
-  case class Quoted(value: String) // any double-quoted string ("...") possibly containing escaped quotes ('")
-  case class Html(value: String) // an HTML string (<...>)
+  case class Identifier(value: String) extends ID // Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores ('_') or digits ([0-9]), not beginning with a digit
+  case class Numeral(value: Double) extends ID // a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
+  case class Quoted(value: String) extends ID // any double-quoted string ("...") possibly containing escaped quotes ('")
+  case class Html(value: String) extends ID // an HTML string (<...>)
 }
