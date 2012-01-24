@@ -35,6 +35,7 @@ trait Exec {
     val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Option(DotFormat.dot)))
 
     var out: String = ""
+    var err: String = ""
 
     def inHandler(os: OutputStream) {
       val pw = new PrintWriter(os)
@@ -48,7 +49,8 @@ trait Exec {
     }
 
     def errHandler(es: InputStream) {
-      es.close() // ignore it
+      err = Source.fromInputStream(es).mkString
+      es.close()
     }
 
     val io = new ProcessIO(inHandler, outHandler, errHandler, false)
@@ -56,7 +58,7 @@ trait Exec {
     val proc = app.process run io
     proc.exitValue() match {
       case 0 => out
-      case x => sys.error("Dot exited with error code: " + x)
+      case x => sys.error("Dot exited with error code: " + x + " with output:\n" + err)
     }
 
   }

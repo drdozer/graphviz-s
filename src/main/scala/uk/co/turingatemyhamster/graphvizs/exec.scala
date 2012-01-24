@@ -14,6 +14,6 @@ package object exec extends Exec {
 
   /** The platform-, system-dependendent location of the dot binary. */
 
-  var dotBinary: File = new File("dot")
+  var dotBinary: File = new File("/usr/bin/dot")
 
 }

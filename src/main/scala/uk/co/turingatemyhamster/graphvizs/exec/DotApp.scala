@@ -26,7 +26,7 @@ case class DotApp(binary: File, opts: DotOpts) {
  */
 case class DotOpts(layout: Option[DotLayout], format: Option[DotFormat]) {
   def generate = List() ++
-    (layout map (l => "-L" :: l.name :: Nil)).getOrElse(Nil) ++
+    (layout map (l => "-K" :: l.name :: Nil)).getOrElse(Nil) ++
     (format map (f => "-T" :: f.format.mkString(":") :: Nil)).getOrElse(Nil)
 }
 

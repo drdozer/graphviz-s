@@ -48,7 +48,7 @@ class ExecSpec extends Specification {
               	end [shape=Msquare];
               }""")
 
-      dotOut contains "x ="
+      dotOut contains "pos="
     }
 
   }
