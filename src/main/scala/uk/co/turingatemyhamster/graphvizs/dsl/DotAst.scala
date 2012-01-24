@@ -33,32 +33,7 @@ trait DotAst extends Dot {
 
 }
 
-trait DotAstConstructors extends DotAst with DotConstructors {
-
-  // implicits to stop you gouging your own eyes out
-  implicit def stringAsId(s: String): ID = ID.Identifier(s)
-  
-  implicit def doubleAsId(d: Double): ID = ID.Numeral(d)
-
-  implicit def intAsId(i: Int): ID = ID.Numeral(i.toDouble)
-  
-  implicit def idAsNodeId(id: ID): NodeId = NodeId(id, None)
-
-  implicit def idableAsNodeId[A](a: A)(implicit a2Id: A => ID): NodeId = idAsNodeId(a2Id(a))
-
-  implicit def idableAsAttributeAssignment[A](a: A)(implicit a2Id: A => ID): AttributeAssignment
-  = AttributeAssignment(a2Id(a))
-
-  implicit def idableAsNodeStatement[A](a: A)(implicit a2Id: A => ID): NodeStatement
-  = NodeStatement(a2Id(a), None)
-
-  implicit def idablePairAsAttributeAssignment[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AttributeAssignment
-  = AttributeAssignment(a2Id(ab._1), b2Id(ab._2))
-
-  implicit def idablePairAsAssignmentStatement[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AssignmentStatement
-  = AssignmentStatement(a2Id(ab._1), b2Id(ab._2))
-
-}
+trait DotAstConstructors extends DotAst with DotConstructors
 
 /**
  * Builder that knows how to make an AST representation.
