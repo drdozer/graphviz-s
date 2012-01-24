@@ -1,0 +1,624 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>uk.co.turingatemyhamster.graphvizs.dsl</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../lib/package_big.png" />
+        <p id="owner"><a name="uk" class="extype" href="../../../../package.html">uk</a>.<a name="uk.co" class="extype" href="../../../package.html">co</a>.<a name="uk.co.turingatemyhamster" class="extype" href="../../package.html">turingatemyhamster</a>.<a name="uk.co.turingatemyhamster.graphvizs" class="extype" href="../package.html">graphvizs</a></p>
+        <h1>dsl</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">package</span>
+      <span class="symbol"> 
+        <span class="name">dsl</span>
+        
+        
+      </span>
+      </h4>
+      
+          <div class="fullcommenttop" id="comment"><div class="comment cmt"><p>Created by IntelliJ IDEA.
+User: nmrp3
+Date: 18/01/12
+Time: 12:10
+To change this template use File | Settings | File Templates.
+</p></div></div>
+        
+
+      <div id="template">
+
+        <div id="mbrsel">
+          <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+          
+          
+          <div id="visbl">
+              <span class="filtertype">Visibility</span>
+              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+            </div>
+        </div>
+
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.AssignmentStatement" data-isabs="false">
+      <a id="AssignmentStatement:AssignmentStatement"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="AssignmentStatement.html"><span class="name">AssignmentStatement</span></a>
+        
+        <span class="params">(<span name="name">name: ID</span>, <span name="value">value: ID</span>)</span><span class="result"> extends Statement with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeAssignment" data-isabs="false">
+      <a id="AttributeAssignment:AttributeAssignment"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="AttributeAssignment.html"><span class="name">AttributeAssignment</span></a>
+        
+        <span class="params">(<span name="name">name: ID</span>, <span name="value">value: Option[ID]</span>)</span><span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeList" data-isabs="false">
+      <a id="AttributeList:AttributeList"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="AttributeList.html"><span class="name">AttributeList</span></a>
+        
+        <span class="params">(<span name="attrs1">attrs1: Option[Seq[AttributeAssignment]]</span>, <span name="attrs2">attrs2: Option[Seq[AttributeAssignment]]</span>)</span><span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeStatement" data-isabs="false">
+      <a id="AttributeStatement:AttributeStatement"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="AttributeStatement.html"><span class="name">AttributeStatement</span></a>
+        
+        <span class="params">(<span name="statementType">statementType: StatementType</span>, <span name="attributeList">attributeList: AttributeList</span>)</span><span class="result"> extends Statement with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.CompassPt" data-isabs="true">
+      <a id="CompassPt:CompassPt"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="CompassPt.html"><span class="name">CompassPt</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Dot" data-isabs="true">
+      <a id="Dot:Dot"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="Dot.html"><span class="name">Dot</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotAst" data-isabs="true">
+      <a id="DotAst:DotAst"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotAst.html"><span class="name">DotAst</span></a>
+        
+        <span class="result"> extends Dot</span>
+      </span>
+      </h4>
+      <p class="comment cmt">An AST that binds the DOT constructors to concrete datatypes.</p>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotAstBuilder" data-isabs="true">
+      <a id="DotAstBuilder:DotAstBuilder"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotAstBuilder.html"><span class="name">DotAstBuilder</span></a>
+        
+        <span class="result"> extends DotAstConstructors</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Builder that knows how to make an AST representation.</p>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotAstConstructors" data-isabs="true">
+      <a id="DotAstConstructors:DotAstConstructors"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotAstConstructors.html"><span class="name">DotAstConstructors</span></a>
+        
+        <span class="result"> extends DotAst with DotConstructors</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotAstDestructors" data-isabs="false">
+      <a id="DotAstDestructors:DotAstDestructors"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="DotAstDestructors.html"><span class="name">DotAstDestructors</span></a>
+        
+        <span class="result"> extends DotAst with DotDestructors</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotAstParser" data-isabs="false">
+      <a id="DotAstParser:DotAstParser"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="DotAstParser.html"><span class="name">DotAstParser</span></a>
+        
+        <span class="result"> extends DotAstBuilder with DotParser</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotAstRenderer" data-isabs="false">
+      <a id="DotAstRenderer:DotAstRenderer"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="DotAstRenderer.html"><span class="name">DotAstRenderer</span></a>
+        
+        <span class="result"> extends DotAstDestructors with DotRenderer</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotConstructors" data-isabs="true">
+      <a id="DotConstructors:DotConstructors"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotConstructors.html"><span class="name">DotConstructors</span></a>
+        
+        <span class="result"> extends Dot</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Constructors defining the DOT data structure.</p>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotDestructors" data-isabs="true">
+      <a id="DotDestructors:DotDestructors"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotDestructors.html"><span class="name">DotDestructors</span></a>
+        
+        <span class="result"> extends Dot</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotParser" data-isabs="true">
+      <a id="DotParser:DotParser"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotParser.html"><span class="name">DotParser</span></a>
+        
+        <span class="result"> extends DotConstructors with RegexParsers</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Parser for the DOT file format.</p>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.DotRenderer" data-isabs="true">
+      <a id="DotRenderer:DotRenderer"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="DotRenderer.html"><span class="name">DotRenderer</span></a>
+        
+        <span class="result"> extends DotDestructors</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp" data-isabs="true">
+      <a id="EdgeOp:EdgeOp"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="EdgeOp.html"><span class="name">EdgeOp</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.EdgeStatement" data-isabs="false">
+      <a id="EdgeStatement:EdgeStatement"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="EdgeStatement.html"><span class="name">EdgeStatement</span></a>
+        
+        <span class="params">(<span name="node">node: Node</span>, <span name="nodes">nodes: Seq[(EdgeOp, Node)]</span>, <span name="attributes">attributes: Option[AttributeList]</span>)</span><span class="result"> extends Statement with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Graph" data-isabs="false">
+      <a id="Graph:Graph"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="Graph.html"><span class="name">Graph</span></a>
+        
+        <span class="params">(<span name="strict">strict: Boolean</span>, <span name="graphType">graphType: GraphType</span>, <span name="id">id: Option[ID]</span>, <span name="statements">statements: Seq[Statement]</span>)</span><span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">The Graph datatype.</p>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.GraphType" data-isabs="true">
+      <a id="GraphType:GraphType"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="GraphType.html"><span class="name">GraphType</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.ID" data-isabs="true">
+      <a id="ID:ID"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="ID.html"><span class="name">ID</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Node" data-isabs="true">
+      <a id="Node:Node"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="Node.html"><span class="name">Node</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.NodeId" data-isabs="false">
+      <a id="NodeId:NodeId"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="NodeId.html"><span class="name">NodeId</span></a>
+        
+        <span class="params">(<span name="id">id: ID</span>, <span name="port">port: Option[Port]</span>)</span><span class="result"> extends Node with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.NodeStatement" data-isabs="false">
+      <a id="NodeStatement:NodeStatement"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="NodeStatement.html"><span class="name">NodeStatement</span></a>
+        
+        <span class="params">(<span name="node">node: NodeId</span>, <span name="attributes">attributes: Option[AttributeList]</span>)</span><span class="result"> extends Statement with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Port" data-isabs="false">
+      <a id="Port:Port"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="Port.html"><span class="name">Port</span></a>
+        
+        <span class="params">(<span name="id">id: Option[ID]</span>, <span name="compassPt">compassPt: Option[CompassPt]</span>)</span><span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Statement" data-isabs="true">
+      <a id="Statement:Statement"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="Statement.html"><span class="name">Statement</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.StatementType" data-isabs="true">
+      <a id="StatementType:StatementType"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="StatementType.html"><span class="name">StatementType</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>sealed </dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Subgraph" data-isabs="false">
+      <a id="Subgraph:Subgraph"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="Subgraph.html"><span class="name">Subgraph</span></a>
+        
+        <span class="params">(<span name="id">id: Option[ID]</span>, <span name="statements">statements: Seq[Statement]</span>)</span><span class="result"> extends Statement with Node with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+        
+        
+
+        <div class="values members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeAssignment" data-isabs="false">
+      <a id="AttributeAssignment:AttributeAssignment"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="AttributeAssignment$.html"><span class="name">AttributeAssignment</span></a>
+        
+        <span class="result"> extends Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeList" data-isabs="false">
+      <a id="AttributeList:AttributeList"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="AttributeList$.html"><span class="name">AttributeList</span></a>
+        
+        <span class="result"> extends Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.CompassPt" data-isabs="false">
+      <a id="CompassPt:CompassPt"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="CompassPt$.html"><span class="name">CompassPt</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp" data-isabs="false">
+      <a id="EdgeOp:EdgeOp"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="EdgeOp$.html"><span class="name">EdgeOp</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.EdgeStatement" data-isabs="false">
+      <a id="EdgeStatement:EdgeStatement"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="EdgeStatement$.html"><span class="name">EdgeStatement</span></a>
+        
+        <span class="result"> extends Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Graph" data-isabs="false">
+      <a id="Graph:Graph"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="Graph$.html"><span class="name">Graph</span></a>
+        
+        <span class="result"> extends Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.GraphType" data-isabs="false">
+      <a id="GraphType:GraphType"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="GraphType$.html"><span class="name">GraphType</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.ID" data-isabs="false">
+      <a id="ID:ID"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="ID$.html"><span class="name">ID</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.NodeStatement" data-isabs="false">
+      <a id="NodeStatement:NodeStatement"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="NodeStatement$.html"><span class="name">NodeStatement</span></a>
+        
+        <span class="result"> extends Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.StatementType" data-isabs="false">
+      <a id="StatementType:StatementType"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="StatementType$.html"><span class="name">StatementType</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.Subgraph" data-isabs="false">
+      <a id="Subgraph:Subgraph"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="Subgraph$.html"><span class="name">Subgraph</span></a>
+        
+        <span class="result"> extends Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#doubleAsId" data-isabs="false">
+      <a id="doubleAsId(Double):ID"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">doubleAsId</span>
+        
+        <span class="params">(<span name="d">d: <span name="scala.Double" class="extype">Double</span></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#idableAsAttributeAssignment" data-isabs="false">
+      <a id="idableAsAttributeAssignment[A](A)((A) ⇒ ID):AttributeAssignment"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">idableAsAttributeAssignment</span>
+        <span class="tparams">[<span name="A">A</span>]</span>
+        <span class="params">(<span name="a">a: A</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="a2Id">a2Id: (A) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeAssignment" class="extype" href="AttributeAssignment.html">AttributeAssignment</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#idableAsNodeId" data-isabs="false">
+      <a id="idableAsNodeId[A](A)((A) ⇒ ID):NodeId"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">idableAsNodeId</span>
+        <span class="tparams">[<span name="A">A</span>]</span>
+        <span class="params">(<span name="a">a: A</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="a2Id">a2Id: (A) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.NodeId" class="extype" href="NodeId.html">NodeId</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#idableAsNodeStatement" data-isabs="false">
+      <a id="idableAsNodeStatement[A](A)((A) ⇒ ID):NodeStatement"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">idableAsNodeStatement</span>
+        <span class="tparams">[<span name="A">A</span>]</span>
+        <span class="params">(<span name="a">a: A</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="a2Id">a2Id: (A) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.NodeStatement" class="extype" href="NodeStatement.html">NodeStatement</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#idablePairAsAssignmentStatement" data-isabs="false">
+      <a id="idablePairAsAssignmentStatement[A, B]((A, B))((A) ⇒ ID,(B) ⇒ ID):AssignmentStatement"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">idablePairAsAssignmentStatement</span>
+        <span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span>
+        <span class="params">(<span name="ab">ab: (A, B)</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="a2Id">a2Id: (A) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>, <span name="b2Id">b2Id: (B) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.AssignmentStatement" class="extype" href="AssignmentStatement.html">AssignmentStatement</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#idablePairAsAttributeAssignment" data-isabs="false">
+      <a id="idablePairAsAttributeAssignment[A, B]((A, B))((A) ⇒ ID,(B) ⇒ ID):AttributeAssignment"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">idablePairAsAttributeAssignment</span>
+        <span class="tparams">[<span name="A">A</span>, <span name="B">B</span>]</span>
+        <span class="params">(<span name="ab">ab: (A, B)</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="a2Id">a2Id: (A) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>, <span name="b2Id">b2Id: (B) ⇒ <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.AttributeAssignment" class="extype" href="AttributeAssignment.html">AttributeAssignment</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#intAsId" data-isabs="false">
+      <a id="intAsId(Int):ID"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">intAsId</span>
+        
+        <span class="params">(<span name="i">i: <span name="scala.Int" class="extype">Int</span></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#parseAsGraph" data-isabs="false">
+      <a id="parseAsGraph(Reader):Graph"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">parseAsGraph</span>
+        
+        <span class="params">(<span name="in">in: <span name="java.io.Reader" class="extype">Reader</span></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.Graph" class="extype" href="Graph.html">Graph</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#parseAsGraph" data-isabs="false">
+      <a id="parseAsGraph(CharSequence):Graph"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">parseAsGraph</span>
+        
+        <span class="params">(<span name="in">in: <span name="java.lang.CharSequence" class="extype">CharSequence</span></span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.Graph" class="extype" href="Graph.html">Graph</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#renderGraph" data-isabs="false">
+      <a id="renderGraph(Graph,Appendable):Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">renderGraph</span>
+        
+        <span class="params">(<span name="g">g: <a name="uk.co.turingatemyhamster.graphvizs.dsl.Graph" class="extype" href="Graph.html">Graph</a></span>, <span name="out">out: <span name="java.lang.Appendable" class="extype">Appendable</span></span>)</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li><li visbl="pub" name="uk.co.turingatemyhamster.graphvizs.dsl.package#stringAsId" data-isabs="false">
+      <a id="stringAsId(String):ID"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">stringAsId</span>
+        
+        <span class="params">(<span name="s">s: String</span>)</span><span class="result">: <a name="uk.co.turingatemyhamster.graphvizs.dsl.ID" class="extype" href="ID.html">ID</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd><a name="uk.co.turingatemyhamster.graphvizs.dsl.package" class="extype" href="package$.html">package</a></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
+      </html>
