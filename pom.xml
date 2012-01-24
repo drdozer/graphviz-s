@@ -60,6 +60,13 @@
 
         <!-- test -->
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.specs2</groupId>
             <artifactId>specs2_2.9.1</artifactId>
             <version>1.7.1</version>
@@ -81,7 +88,7 @@
                 <plugin>
                     <groupId>org.scala-tools</groupId>
                     <artifactId>maven-scala-plugin</artifactId>
-                    <version>2.9.1</version>
+                    <version>2.15.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -138,6 +145,8 @@
                     <includes>
                         <include>**/*Test.*</include>
                         <include>**/*Suite.*</include>
+                        <include>**/*Unit.*</include>
+                        <include>**/*Spec.*</include>
                     </includes>
                 </configuration>
             </plugin>

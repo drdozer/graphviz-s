@@ -2,7 +2,10 @@ package uk.co.turingatemyhamster.graphvizs.dsl
 
 import org.specs2.mutable._
 import org.specs2.matcher.ParserMatchers
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class DotAstParserSpec extends Specification with ParserMatchers {
 
   val parsers = new DotAstParser
