@@ -61,14 +61,15 @@ trait DotParser extends DotConstructors with RegexParsers {
   val dblquoted: Parser[String] = """"([^"]|(\\"))*"""".r -> 1
 
   // compass points
-  val n: Parser[String] = "(?i)n".r
+  val n:  Parser[String] = "(?i)n".r
   val ne: Parser[String] = "(?i)ne".r
-  val e: Parser[String] = "(?i)e".r
+  val e:  Parser[String] = "(?i)e".r
   val se: Parser[String] = "(?i)se".r
-  val s: Parser[String] = "(?i)s".r
+  val s:  Parser[String] = "(?i)s".r
   val sw: Parser[String] = "(?i)sw".r
-  val w: Parser[String] = "(?i)w".r
+  val w:  Parser[String] = "(?i)w".r
   val nw: Parser[String] = "(?i)nw".r
+  val c:  Parser[String] = "(?i)c".r
 
 
   // productions

@@ -141,6 +141,7 @@ class DotAstParser extends DotAstBuilder with DotParser {
     (sw ^^^ CompassPt.SW) |
     (w  ^^^ CompassPt.W)  |
     (nw ^^^ CompassPt.NW) |
+    (c  ^^^ CompassPt.C)  |
     (id ^^ (CompassPt.or apply _))
 }
 
@@ -215,6 +216,7 @@ class DotAstRenderer(val out: Appendable) extends DotAstDestructors with DotRend
     case CompassPt.SW => out append "sw"
     case CompassPt.W => out append "w"
     case CompassPt.NW => out append "nw"
+    case CompassPt.C => out append "c"
     case CompassPt.or(id) => render_id(id)
   }
 }
