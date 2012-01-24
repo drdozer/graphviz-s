@@ -1,5 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs
 
+import java.io.Reader
+
 /**
  * Created by IntelliJ IDEA.
  * User: nmrp3
@@ -11,6 +13,15 @@ package uk.co.turingatemyhamster.graphvizs
 package object dsl {
 
   def parseAsGraph(in: CharSequence): Graph = {
+    val parser = new DotAstParser
+    import parser._
+    parser.parseAll(graph, in) match {
+      case Success(g, _) => g
+      case NoSuccess(msg, input) => sys.error("Unable to parse input: " + msg + " at " + input.pos);
+    }
+  }
+
+  def parseAsGraph(in: Reader): Graph = {
     val parser = new DotAstParser
     import parser._
     parser.parseAll(graph, in) match {
