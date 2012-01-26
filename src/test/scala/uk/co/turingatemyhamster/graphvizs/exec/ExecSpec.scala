@@ -21,7 +21,7 @@ class ExecSpec extends Specification {
   "DOT Exec" should {
 
     "run DOT on string input and generate string output" in {
-      val dotOut = dot2dotS("""
+      val dotOut: String = dot2dot[String, String]("""
               digraph G {
 
               	subgraph cluster_0 {
@@ -56,7 +56,7 @@ class ExecSpec extends Specification {
   }
 
   "run DOT on graph input and generate graph output" in {
-    val gOut = dot2dotG(StrictDigraph("g",
+    val gOut = dot2dot[Graph, Graph](StrictDigraph("g",
       EdgeStatement("a1") -> "a2" -> "a3" -> "a4",
       EdgeStatement("a1") -> "a4"
     ))
