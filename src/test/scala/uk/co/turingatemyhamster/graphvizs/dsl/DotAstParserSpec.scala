@@ -247,7 +247,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
         graph must succeedOn("""
                 digraph G {
                 	start -> a0;
-                }""").withResult(Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start", Seq(EdgeOp.-> -> "a0"), None))))
+                }""").withResult(Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start") -> "a0")))
       }
 
       "parse the cluster example" in {

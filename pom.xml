@@ -4,9 +4,41 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>graphviz-s</groupId>
+    <groupId>uk.co.turingatemyhamster</groupId>
     <artifactId>graphviz-s</artifactId>
     <version>0.1-SNAPSHOT</version>
+    <name>Graphviz-S</name>
+    <description>Graphviz bindings for scala.</description>
+    <inceptionYear>2012</inceptionYear>
+    <url>http://drdozer.github.com/graphviz-s</url>
+
+    <developers>
+        <developer>
+            <id>drdozer</id>
+            <name>Matthew Pocock</name>
+            <email>turingatemyhamster@gmail.com</email>
+            <url>http://turingatemyhamster.co.uk/blog</url>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>My License</name>
+            <url>http://....</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>http://github.com/drdozer/graphviz-s/issues</url>
+    </issueManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.5</maven.compiler.source>
@@ -77,6 +109,13 @@
             <groupId>org.scala-tools.testing</groupId>
             <artifactId>scalacheck_2.9.1</artifactId>
             <version>1.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.version}</artifactId>
+            <version>1.6.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -204,6 +243,7 @@
             </extension>
         </extensions>
     </build>
+
     <reporting>
         <plugins>
             <plugin>

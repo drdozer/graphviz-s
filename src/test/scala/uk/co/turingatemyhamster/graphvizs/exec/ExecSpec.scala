@@ -4,7 +4,7 @@ package exec
 import org.specs2.mutable.Specification
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
-import uk.co.turingatemyhamster.graphvizs.dsl.{EdgeStatement, NodeStatement, GraphType, Graph}
+import uk.co.turingatemyhamster.graphvizs.dsl._
 
 
 /**
@@ -56,7 +56,7 @@ class ExecSpec extends Specification {
   }
 
   "run DOT on graph input and generate graph output" in {
-    val gOut = dot2dotG(Graph(false, GraphType.Digraph, Some("g"),
+    val gOut = dot2dotG(StrictDigraph("g",
       EdgeStatement("a1") -> "a2" -> "a3" -> "a4",
       EdgeStatement("a1") -> "a4"
     ))

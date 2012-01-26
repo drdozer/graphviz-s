@@ -8,11 +8,6 @@ package uk.co.turingatemyhamster.graphvizs.dsl
 
 case class Graph(strict: Boolean, graphType: GraphType, id: Option[ID], statements: Seq[Statement])
 
-object Graph {
-  def apply(strict: Boolean, graphType: GraphType, id: Option[ID], statements: Statement*): Graph =
-    Graph(strict, graphType, id, statements)
-}
-
 sealed trait GraphType
 object GraphType {
   case object Graph extends GraphType

@@ -59,4 +59,16 @@ package object dsl {
   implicit def idablePairAsAssignmentStatement[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AssignmentStatement
   = AssignmentStatement(a2Id(ab._1), b2Id(ab._2))
 
+  // other constructors and things
+  def NonStrictGraph(id: ID, statements: Statement*): Graph =
+    Graph(false, GraphType.Graph, Some(id), statements)
+
+  def NonStrictDigraph(id: ID, statements: Statement*): Graph =
+    Graph(false, GraphType.Digraph, Some(id), statements)
+
+  def StrictGraph(id: ID, statements: Statement*): Graph =
+    Graph(true, GraphType.Graph, Some(id), statements)
+
+  def StrictDigraph(id: ID, statements: Statement*): Graph =
+    Graph(true, GraphType.Digraph, Some(id), statements)
 }
