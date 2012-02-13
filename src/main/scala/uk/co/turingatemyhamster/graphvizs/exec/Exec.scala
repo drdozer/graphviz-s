@@ -84,17 +84,17 @@ object OutputHandler {
   implicit def stringOutputHandler: OutputHandler[String] = new OutputHandler[String] {
     var value: String = null
 
-    def handle(out: InputStream) {
-      value = Source.fromInputStream(out).mkString
-      out.close()
+    def handle(in: InputStream) {
+      value = Source.fromInputStream(in).mkString
+      in.close()
     }
   }
 
   implicit def graphOutputHandler: OutputHandler[Graph] = new OutputHandler[Graph] {
     var value: Graph = null
 
-    def handle(out: InputStream) {
-      value = dsl.parseAsGraph(new InputStreamReader(out))
+    def handle(in: InputStream) {
+      value = dsl.parseAsGraph(new InputStreamReader(in))
     }
   }
 }
