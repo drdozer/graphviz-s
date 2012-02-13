@@ -28,15 +28,16 @@ trait Exec {
    * Run the input through dot and acquire the output.
    *
    * @param from        the input value
+   * @param format      the format parameter to dot
    * @param inputFrom   implicit handler to present `from` to the stdin of dot
    * @param outputTo    implicit handler to process the stdout of dot into a `To`
    * @tparam From       the input type
    * @tparam To         the output type
    * @return            a `To` representing the output of dot
    */
-  def dot2dot[From, To](from: From)(implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]): To = {
+  def dot2[From, To](from: From, format: DotFormat)(implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]): To = {
 
-    val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Option(DotFormat.dot)))
+    val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Option(format)))
 
     val errHandler = OutputHandler.stringOutputHandler
 
@@ -48,6 +49,18 @@ trait Exec {
       case x => sys.error("Dot exited with error code: " + x + " with output:\n" + errHandler.value)
     }
   }
+
+  /**
+   * Run the input through dot and acquire the output, using dot format.
+   *
+   * @param from        the input value
+   * @param inputFrom   implicit handler to present `from` to the stdin of dot
+   * @param outputTo    implicit handler to process the stdout of dot into a `To`
+   * @tparam From       the input type
+   * @tparam To         the output type
+   * @return            a `To` representing the output of dot
+   */
+  def dot2dot[From, To](from: From)(implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]) = dot2(from, DotFormat.dot)
 }
 
 trait InputHandler[A] {
@@ -95,6 +108,20 @@ object OutputHandler {
 
     def handle(in: InputStream) {
       value = dsl.parseAsGraph(new InputStreamReader(in))
+    }
+  }
+
+  implicit def binaryOutputHandler: OutputHandler[Array[Byte]] = new OutputHandler[Array[Byte]] {
+    var value: Array[Byte] = null
+
+    def handle(in: InputStream) {
+      try {
+        val bis = new BufferedInputStream(in)
+        value = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
+      }
+      finally {
+        in.close()
+      }
     }
   }
 }
