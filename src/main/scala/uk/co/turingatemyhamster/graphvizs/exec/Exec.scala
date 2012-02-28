@@ -33,11 +33,10 @@ trait Exec extends GraphHandlers with StringHandlers {
    * @param outputTo    implicit handler to process the stdout of dot into a `To`
    * @tparam From       the input type
    * @tparam To         the output type
-   * @tparam F          the format type
    * @return            a `To` representing the output of dot
    */
-  def dot2dot[From, To, F <: DotFormat](from: From, format: F = DotFormat.dot)
-                                       (implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To, F]): To =
+  def dot2dot[From, To](from: From, format: DotFormat = DotFormat.dot)
+                                       (implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]): To =
   {
     val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Some(format)))
 
@@ -59,7 +58,7 @@ trait InputHandler[A] {
 }
 
 @implicitNotFound("Unable to find output handler for format ${F} that can convert the output to ${A}")
-trait OutputHandler[A, -F <: DotFormat] {
+trait OutputHandler[A] {
   def handle(output: InputStream)
   def value: A
 }
@@ -74,7 +73,7 @@ trait StringHandlers {
     }
   }
 
-  implicit def stringOutputHandler: OutputHandler[String, DotFormat] = new OutputHandler[String, DotFormat] {
+  implicit def stringOutputHandler: OutputHandler[String] = new OutputHandler[String] {
     var value: String = null
 
     def handle(out: InputStream) {
@@ -95,7 +94,7 @@ trait GraphHandlers {
     }
   }
 
-  implicit def graphOutputHandler: OutputHandler[Graph, DotFormat.dot.type] = new OutputHandler[Graph, DotFormat.dot.type] {
+  implicit def graphOutputHandler: OutputHandler[Graph] = new OutputHandler[Graph] {
     var value: Graph = null
 
     def handle(out: InputStream) {
