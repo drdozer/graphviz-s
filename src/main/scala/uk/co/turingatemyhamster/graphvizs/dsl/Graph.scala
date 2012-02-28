@@ -17,7 +17,9 @@ object GraphType {
 
 sealed trait Statement
 
-case class NodeStatement(node: NodeId, attributes: Option[AttributeList]) extends Statement
+case class NodeStatement(node: NodeId, attributes: Option[AttributeList]) extends Statement {
+  def :| (as: AttributeList) = copy(attributes = Some(as))
+}
 
 case object NodeStatement {
   def apply(node: NodeId): NodeStatement = NodeStatement(node, None)
@@ -27,6 +29,7 @@ case object NodeStatement {
 case class EdgeStatement(node: Node, nodes: Seq[(EdgeOp, Node)], attributes: Option[AttributeList]) extends Statement {
   def -> (n: Node): EdgeStatement = copy(nodes = nodes :+ (EdgeOp.->, n))
   def -- (n: Node): EdgeStatement = copy(nodes = nodes :+ (EdgeOp.--, n))
+  def :| (as: AttributeList) = copy(attributes = Some(as))
 }
 
 object EdgeStatement {
@@ -77,12 +80,36 @@ object StatementType {
   case object Edge extends StatementType
 }
 
-case class AttributeAssignment(name: ID, value: Option[ID]) // value=None ~> value=Some(true)
+
+sealed trait AttributeAssignment {
+  def name: ID
+  def value: Option[ID]   // value=None ~> value=Some(true)  
+}
 
 object AttributeAssignment {
-  def apply(name: ID): AttributeAssignment = AttributeAssignment(name, None)
-  def apply(name: ID, value: ID): AttributeAssignment = AttributeAssignment(name, Some(value))
+  def apply(name: ID): AttributeAssignment = AnyAttributeAssignment(name, None)
+  def apply(name: ID, value: Option[ID]): AttributeAssignment = AnyAttributeAssignment(name, value)
+  def apply(name: ID, value: ID): AttributeAssignment = AnyAttributeAssignment(name, Some(value))
+  
+  case class AnyAttributeAssignment(name: ID, value: Option[ID]) extends AttributeAssignment
+  
+  abstract class DoubleAttribute extends AttributeAssignment {
+    def doubleValue: Double
+    def value: Option[ID] = Some(ID.Numeral(doubleValue))
+  }
+  
+  abstract class StringAttribute extends AttributeAssignment {
+    def stringValue: String
+    def value: Option[ID] = Some(ID.Identifier(stringValue))
+  }
+  
+  case class Damping(doubleValue: Double) extends DoubleAttribute { def name: ID = "Damping" } // G
+  case class K(doubleValue: Double)       extends DoubleAttribute { def name: ID = "K" }       // GC
+  case class Url(stringValue: String)     extends StringAttribute { def name: ID = "URL" }     // ENGC
+  case class Area(doubleValue: Double)    extends DoubleAttribute { def name: ID = "area" }    // NC
+  //case class Arrowhead(
 }
+
 
 case class AssignmentStatement(name: ID,  value: ID) extends Statement
 

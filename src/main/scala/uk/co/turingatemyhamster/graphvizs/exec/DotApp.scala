@@ -50,19 +50,28 @@ object DotLayout {
  *
  * @param format    the format name, renderer, formatter, e.g. "png", "png:gd"
  */
-case class DotFormat(format: List[String])
-object DotFormat {
-  def apply(f: String): DotFormat = DotFormat(f :: Nil)
+case class DotFormat(format: List[String]) {
+  def this(f: String) = this(f :: Nil)
+}
 
-  val dot = DotFormat("dot")
-  val ps = DotFormat("ps")
-  val svg = DotFormat("svg")
-  val svgz = DotFormat("svgz")
-  val fig = DotFormat("fig")
-  val mif = DotFormat("mif")
-  val hpgl = DotFormat("hpgl")
-  val pcl = DotFormat("pcl")
-  val png = DotFormat("png")
-  val gif = DotFormat("gif")
-  val cmapx = DotFormat("cmapx")
+object DotFormat {
+  object dot    extends DotFormat("dot")
+  object ps     extends DotFormat("ps")
+  object svg    extends DotFormat("svg")
+  object svgz   extends DotFormat("svgz")
+  object fig    extends DotFormat("fig")
+  object mif    extends DotFormat("mif")
+  object hpgl   extends DotFormat("hpgl")
+  object pcl    extends DotFormat("pcl")
+  object png    extends DotFormat("png")
+  object gif    extends DotFormat("gif")
+  object cmapx  extends DotFormat("cmapx")
+
+}
+
+sealed trait StringFormat[F <: DotFormat]
+
+object StringFormat {
+  implicit object dotIsStringFormat extends StringFormat[DotFormat.dot.type]
+
 }

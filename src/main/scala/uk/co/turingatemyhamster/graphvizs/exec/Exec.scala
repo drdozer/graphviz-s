@@ -5,6 +5,7 @@ import io.Source
 import sys.process.ProcessIO
 import uk.co.turingatemyhamster.graphvizs.dsl.Graph
 import java.io._
+import annotation.implicitNotFound
 
 /**
  * Dot binary executor.
@@ -15,7 +16,7 @@ import java.io._
  * @author Matthew Pocock
  */
 
-trait Exec {
+trait Exec extends GraphHandlers with StringHandlers {
 
   /**
    * Location of the dot binary.
@@ -32,13 +33,15 @@ trait Exec {
    * @param outputTo    implicit handler to process the stdout of dot into a `To`
    * @tparam From       the input type
    * @tparam To         the output type
+   * @tparam F          the format type
    * @return            a `To` representing the output of dot
    */
-  def dot2dot[From, To](from: From)(implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]): To = {
+  def dot2dot[From, To, F <: DotFormat](from: From, format: F = DotFormat.dot)
+                                       (implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To, F]): To =
+  {
+    val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Some(format)))
 
-    val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Option(DotFormat.dot)))
-
-    val errHandler = OutputHandler.stringOutputHandler
+    val errHandler = stringOutputHandler
 
     val io = new ProcessIO(inputFrom.handle(from), outputTo.handle, errHandler.handle, false)
 
@@ -50,11 +53,18 @@ trait Exec {
   }
 }
 
+@implicitNotFound("Unable to find input handler for ${A}")
 trait InputHandler[A] {
   def handle(a: A)(input: OutputStream)
 }
 
-object InputHandler {
+@implicitNotFound("Unable to find output handler for format ${F} that can convert the output to ${A}")
+trait OutputHandler[A, -F <: DotFormat] {
+  def handle(output: InputStream)
+  def value: A
+}
+
+trait StringHandlers {
 
   implicit object StringInputHandler extends InputHandler[String] {
     def handle(a: String)(os: OutputStream) {
@@ -63,6 +73,19 @@ object InputHandler {
       pw.close()
     }
   }
+
+  implicit def stringOutputHandler: OutputHandler[String, DotFormat] = new OutputHandler[String, DotFormat] {
+    var value: String = null
+
+    def handle(out: InputStream) {
+      value = Source.fromInputStream(out).mkString
+      out.close()
+    }
+  }
+  
+}
+
+trait GraphHandlers {
   
   implicit object GraphInputHandler extends InputHandler[Graph] {
     def handle(g: Graph)(os: OutputStream) {
@@ -71,30 +94,13 @@ object InputHandler {
       pw.close()
     }
   }
-  
-}
 
-trait OutputHandler[A] {
-  def handle(output: InputStream)
-  def value: A
-}
-
-object OutputHandler {
-
-  implicit def stringOutputHandler: OutputHandler[String] = new OutputHandler[String] {
-    var value: String = null
-
-    def handle(out: InputStream) {
-      value = Source.fromInputStream(out).mkString
-      out.close()
-    }
-  }
-
-  implicit def graphOutputHandler: OutputHandler[Graph] = new OutputHandler[Graph] {
+  implicit def graphOutputHandler: OutputHandler[Graph, DotFormat.dot.type] = new OutputHandler[Graph, DotFormat.dot.type] {
     var value: Graph = null
 
     def handle(out: InputStream) {
       value = dsl.parseAsGraph(new InputStreamReader(out))
     }
   }
+  
 }

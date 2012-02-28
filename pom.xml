@@ -90,6 +90,12 @@
             <version>${scala.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.scalaz</groupId>
+            <artifactId>scalaz-core_${scala.version}</artifactId>
+            <version>7.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
