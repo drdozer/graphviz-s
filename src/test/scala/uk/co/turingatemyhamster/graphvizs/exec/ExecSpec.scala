@@ -5,6 +5,7 @@ import org.specs2.mutable.Specification
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import uk.co.turingatemyhamster.graphvizs.dsl._
+import xml.Elem
 
 
 /**
@@ -65,6 +66,13 @@ class ExecSpec extends Specification {
     ! annotated.isEmpty
   }
 
-  "run DOT on "
+  "run DOT on graph input and generate SVG XML output" in {
+    val svgOut = dot2dot[Graph, Elem](StrictDigraph("g",
+          EdgeStatement("a1") -> "a2" -> "a3" -> "a4",
+          EdgeStatement("a1") -> "a4"
+        ), DotFormat.svg)
+    
+    svgOut.label must_== "svg"
+  }
 
 }

@@ -6,6 +6,7 @@ import sys.process.ProcessIO
 import uk.co.turingatemyhamster.graphvizs.dsl.Graph
 import java.io._
 import annotation.implicitNotFound
+import xml.{Elem, XML}
 
 /**
  * Dot binary executor.
@@ -16,7 +17,7 @@ import annotation.implicitNotFound
  * @author Matthew Pocock
  */
 
-trait Exec extends GraphHandlers with StringHandlers {
+trait Exec extends GraphHandlers with XmlHandlers with StringHandlers {
 
   /**
    * Location of the dot binary.
@@ -57,7 +58,7 @@ trait InputHandler[A] {
   def handle(a: A)(input: OutputStream)
 }
 
-@implicitNotFound("Unable to find output handler for format ${F} that can convert the output to ${A}")
+@implicitNotFound("Unable to find output handler that can convert the output to ${A}")
 trait OutputHandler[A] {
   def handle(output: InputStream)
   def value: A
@@ -102,4 +103,16 @@ trait GraphHandlers {
     }
   }
   
+}
+
+trait XmlHandlers {
+
+  implicit def xmlOutputHandler: OutputHandler[Elem] = new OutputHandler[Elem] {
+    var value: Elem = null
+
+    def handle(out: InputStream) {
+      value = XML.load(out)
+    }
+  }
+
 }
