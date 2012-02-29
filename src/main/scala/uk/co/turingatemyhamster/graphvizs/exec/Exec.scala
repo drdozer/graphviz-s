@@ -7,6 +7,7 @@ import uk.co.turingatemyhamster.graphvizs.dsl.Graph
 import java.io._
 import annotation.implicitNotFound
 import xml.{Elem, XML}
+import javax.xml.parsers.SAXParserFactory
 
 /**
  * Dot binary executor.
@@ -100,6 +101,7 @@ trait GraphHandlers {
 
     def handle(out: InputStream) {
       value = dsl.parseAsGraph(new InputStreamReader(out))
+      out.close()
     }
   }
   
@@ -110,8 +112,15 @@ trait XmlHandlers {
   implicit def xmlOutputHandler: OutputHandler[Elem] = new OutputHandler[Elem] {
     var value: Elem = null
 
+    val f = SAXParserFactory.newInstance()
+    f.setValidating(false)
+    f.setFeature("http://xml.org/sax/features/validation", false)
+    f.setFeature("http://apache.org/xml/features/validation/dynamic", false)
+    f.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+
     def handle(out: InputStream) {
-      value = XML.load(out)
+      val parser = f.newSAXParser()
+      value = XML.withSAXParser(parser).load(out)
     }
   }
 

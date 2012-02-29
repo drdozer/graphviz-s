@@ -80,6 +80,9 @@ class DotAstParserSpec extends Specification with ParserMatchers {
           AttributeList(Some(Seq(AttributeAssignment("a", "b"), AttributeAssignment("c", "d"))))
       }
 
+      (Seq("a" -> "b", "c" -> "d") : AttributeList) must_==
+        AttributeList(Some(Seq(AttributeAssignment("a", "b"), AttributeAssignment("c", "d"))))
+
       "build subgraph from ID only" in {
         Subgraph("a") must_== Subgraph(Some("a" : ID), Seq())
       }

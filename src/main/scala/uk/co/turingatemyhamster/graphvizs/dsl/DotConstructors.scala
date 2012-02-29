@@ -56,8 +56,8 @@ trait DotParser extends DotConstructors with RegexParsers {
   val SUBGRAPH: Parser[String] = "(?i)subgraph".r
 
   // identifier types
-  val identifier: Parser[String] = """[\w&&[\D]][\w]*""".r
-  val numeral: Parser[String] = """-?((\.\d+)|(\d+(\.\d*)?))""".r
+  val identifier: Parser[String] = ID.IdRx
+  val numeral: Parser[String] = ID.NumeralRx
   val dblquoted: Parser[String] = """"([^"]|(\\"))*"""".r -> 1
 
   // compass points

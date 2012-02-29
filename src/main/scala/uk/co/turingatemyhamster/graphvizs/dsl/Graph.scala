@@ -18,7 +18,7 @@ object GraphType {
 sealed trait Statement
 
 case class NodeStatement(node: NodeId, attributes: Option[AttributeList]) extends Statement {
-  def :| (as: AttributeList) = copy(attributes = Some(as))
+  def :|[AS] (as: AS)(implicit as2Al: AS => AttributeList) = copy(attributes = Some(as))
 }
 
 case object NodeStatement {
@@ -29,7 +29,7 @@ case object NodeStatement {
 case class EdgeStatement(node: Node, nodes: Seq[(EdgeOp, Node)], attributes: Option[AttributeList]) extends Statement {
   def -> (n: Node): EdgeStatement = copy(nodes = nodes :+ (EdgeOp.->, n))
   def -- (n: Node): EdgeStatement = copy(nodes = nodes :+ (EdgeOp.--, n))
-  def :| (as: AttributeList) = copy(attributes = Some(as))
+  def :|[AS] (as: AS)(implicit as2Al: AS => AttributeList) = copy(attributes = Some(as))
 }
 
 object EdgeStatement {
@@ -128,4 +128,16 @@ object ID {
   case class Numeral(value: Double) extends ID // a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
   case class Quoted(value: String) extends ID // any double-quoted string ("...") possibly containing escaped quotes ('")
   case class Html(value: String) extends ID // an HTML string (<...>)
+
+  val IdRx = """([\w&&[\D]][\w]*)""".r
+  val NumeralRx = """-?((\.\d+)|(\d+(\.\d*)?))""".r
+
+  def apply(id: String): ID = {
+    id match {
+      case IdRx(s) =>
+        Identifier(s)
+      case s =>
+        Quoted(s)
+    }
+  }
 }

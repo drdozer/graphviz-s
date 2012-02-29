@@ -39,11 +39,13 @@ package object dsl {
 
 
   // implicits to stop you gouging your own eyes out
-  implicit def stringAsId(s: String): ID = ID.Identifier(s)
+  implicit def stringAsId(s: String): ID = ID(s)
 
   implicit def doubleAsId(d: Double): ID = ID.Numeral(d)
 
   implicit def intAsId(i: Int): ID = ID.Numeral(i.toDouble)
+
+  implicit def longAsId(l: Long): ID = ID.Numeral(l.toDouble)
 
   implicit def idableAsNodeId[A](a: A)(implicit a2Id: A => ID): NodeId = NodeId(a2Id(a), None)
 
@@ -58,6 +60,9 @@ package object dsl {
 
   implicit def idablePairAsAssignmentStatement[A, B](ab: (A, B))(implicit a2Id: A => ID, b2Id: B => ID): AssignmentStatement
   = AssignmentStatement(a2Id(ab._1), b2Id(ab._2))
+  
+  implicit def assignmentsAsAttributeList[AA](ass: Seq[AA])(implicit f: AA => AttributeAssignment): AttributeList =
+    AttributeList((ass map f) : _*)
 
   // other constructors and things
   def NonStrictGraph(id: ID, statements: Statement*): Graph =
