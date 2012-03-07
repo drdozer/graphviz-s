@@ -137,7 +137,7 @@ object ID {
       case IdRx(s) =>
         Identifier(s)
       case s =>
-        Quoted(s)
+        Quoted(s.replace("\n", """\n"""))
     }
   }
 }
