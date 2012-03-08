@@ -1,5 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
+import xml.Elem
+
 /**
  * The Graph datatype.
  *
@@ -127,7 +129,7 @@ object ID {
   case class Identifier(value: String) extends ID // Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores ('_') or digits ([0-9]), not beginning with a digit
   case class Numeral(value: Double) extends ID // a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
   case class Quoted(value: String) extends ID // any double-quoted string ("...") possibly containing escaped quotes ('")
-  case class Html(value: String) extends ID // an HTML string (<...>)
+  case class Html(value: Elem) extends ID // an HTML block
 
   val IdRx = """([\w&&[\D]][\w]*)""".r
   val NumeralRx = """-?((\.\d+)|(\d+(\.\d*)?))""".r

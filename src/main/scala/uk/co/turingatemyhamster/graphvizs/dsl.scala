@@ -1,6 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs
 
 import java.io.Reader
+import xml.Elem
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,6 +47,8 @@ package object dsl {
   implicit def intAsId(i: Int): ID = ID.Numeral(i.toDouble)
 
   implicit def longAsId(l: Long): ID = ID.Numeral(l.toDouble)
+
+  implicit def elementAsId(html: Elem): ID = ID.Html(html)
 
   implicit def idableAsNodeId[A](a: A)(implicit a2Id: A => ID): NodeId = NodeId(a2Id(a), None)
 

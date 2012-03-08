@@ -1,5 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
+import xml.XML
+
 /**
  * An AST that binds the DOT constructors to concrete datatypes.
  *
@@ -155,7 +157,7 @@ class DotAstRenderer(val out: Appendable) extends DotAstDestructors with DotRend
     case ID.Identifier(s) => s
     case ID.Numeral(n) => n.toString
     case ID.Quoted(s) => qt + s.toString + qt
-    case ID.Html(s) => s
+    case ID.Html(elem) => elem.toString
   })
 
   def render_statement(st: Statement) = st match {
