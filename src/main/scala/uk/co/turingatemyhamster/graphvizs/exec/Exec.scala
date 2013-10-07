@@ -18,7 +18,7 @@ import javax.xml.parsers.SAXParserFactory
  * @author Matthew Pocock
  */
 
-trait Exec extends GraphHandlers with XmlHandlers with StringHandlers {
+trait Exec extends GraphHandlers with XmlHandlers with StringHandlers with FileHandlers {
 
   /**
    * Location of the dot binary.
@@ -40,7 +40,7 @@ trait Exec extends GraphHandlers with XmlHandlers with StringHandlers {
   def dot2dot[From, To](from: From, format: DotFormat = DotFormat.dot)
                                        (implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]): To =
   {
-    val app = DotApp(dotBinary, DotOpts(Some(DotLayout.dot), Some(format)))
+    val app = DotApp(dotBinary, outputTo.processOpts(DotOpts(Some(DotLayout.dot), Some(format))))
 
     val errHandler = stringOutputHandler
 
@@ -61,6 +61,7 @@ trait InputHandler[A] {
 
 @implicitNotFound("Unable to find output handler that can convert the output to ${A}")
 trait OutputHandler[A] {
+  def processOpts(opts: DotOpts): DotOpts = opts
   def handle(output: InputStream)
   def value: A
 }
@@ -124,4 +125,18 @@ trait XmlHandlers {
     }
   }
 
+}
+
+trait FileHandlers {
+  implicit def fileOutputHandler: OutputHandler[File] = new OutputHandler[File] {
+
+    var value: File = null
+
+    override def processOpts(opts: DotOpts) = {
+      value = File.createTempFile("", opts.format.flatMap(_.format.headOption).getOrElse(""))
+      opts.copy(outFile = Some(value))
+    }
+
+    def handle(output: InputStream) = {}
+  }
 }

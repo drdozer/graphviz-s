@@ -24,10 +24,11 @@ case class DotApp(binary: File, opts: DotOpts) {
  *
  * @author Matthew Pocock
  */
-case class DotOpts(layout: Option[DotLayout], format: Option[DotFormat]) {
+case class DotOpts(layout: Option[DotLayout], format: Option[DotFormat], outFile: Option[File] = None) {
   def generate = List() ++
     (layout map (l => "-K" :: l.name :: Nil)).getOrElse(Nil) ++
-    (format map (f => "-T" :: f.format.mkString(":") :: Nil)).getOrElse(Nil)
+    (format map (f => "-T" :: f.format.mkString(":") :: Nil)).getOrElse(Nil) ++
+    (outFile map (f => "-o" :: f.getAbsolutePath :: Nil)).getOrElse(Nil)
 }
 
 /**
