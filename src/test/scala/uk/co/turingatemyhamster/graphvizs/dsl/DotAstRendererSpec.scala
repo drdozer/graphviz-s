@@ -25,7 +25,7 @@ class DotAstRendererSpec extends Specification {
       renderWith(render_id, -1234.3453 : ID) must_== "-1234.3453"
     }
 
-    "renduer numeric for 1" in new renderer {
+    "render numeric for 1" in new renderer {
       renderWith(render_id, 1 : ID) must_== "1.0"
     }
   }
