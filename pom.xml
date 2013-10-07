@@ -76,6 +76,17 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+
         <extensions>
             <extension>
                 <groupId>org.apache.maven.scm</groupId>
