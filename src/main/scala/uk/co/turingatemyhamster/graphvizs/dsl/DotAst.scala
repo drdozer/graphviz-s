@@ -1,7 +1,5 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
-import xml.XML
-
 /**
  * An AST that binds the DOT constructors to concrete datatypes.
  *
