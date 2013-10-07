@@ -133,7 +133,7 @@ trait FileHandlers {
     var value: File = null
 
     override def processOpts(opts: DotOpts) = {
-      value = File.createTempFile("", opts.format.flatMap(_.format.headOption).getOrElse(""))
+      value = File.createTempFile("dot_", opts.format.flatMap(_.format.headOption).getOrElse(""))
       opts.copy(outFile = Some(value))
     }
 
