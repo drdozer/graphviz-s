@@ -115,10 +115,12 @@ object AttributeAssignment {
 
 case class AssignmentStatement(name: ID,  value: ID) extends Statement
 
-case class Subgraph(id: Option[ID], statements: Seq[Statement]) extends Statement with Node
+case class Subgraph(id: Option[ID], statements: Seq[Statement]) extends Statement with Node {
+  def addStatements(stmts: Seq[Statement]) = copy(statements = statements ++ stmts)
+}
 
 object Subgraph {
-//  def apply(id: Option[ID], statements: Seq[Statement])
+  def apply(name: ID, aa: AssignmentStatement*): Subgraph = Subgraph(Some(name), aa)
   def apply(name: ID): Subgraph = Subgraph(Some(name), Seq())
   def apply(aa: AssignmentStatement*): Subgraph = Subgraph(None, aa)
 }
