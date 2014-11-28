@@ -1,7 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs
 
 import java.io.Reader
-import xml.Elem
+import scala.xml.Elem
 
 /**
  * Created by IntelliJ IDEA.

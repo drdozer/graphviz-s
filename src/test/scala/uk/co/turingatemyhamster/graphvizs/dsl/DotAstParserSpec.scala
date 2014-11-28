@@ -29,11 +29,11 @@ class DotAstParserSpec extends Specification with ParserMatchers {
         ("a" : ID) must_== ID.Identifier("a")
       }
       
-      "promote double to ID" should {
+      "promote double to ID" in {
         (1.0 : ID) must_== ID.Numeral(1.0)
       }
 
-      "prmote int to ID" should {
+      "prmote int to ID" in {
         (1 : ID) must_== ID.Numeral(1.0)
       }
 
@@ -184,23 +184,23 @@ class DotAstParserSpec extends Specification with ParserMatchers {
     "statement_list parser" should {
 
       "parse the empty string" in {
-        statement_list must succeedOn("").withResult(Seq[Statement]())
+        statement_list must succeedOn("").withResult(equalTo(Seq[Statement]()))
       }
 
       "parse one node statement" in {
-        statement_list must succeedOn("n1").withResult(Seq(NodeStatement("n1", None) : Statement))
+        statement_list must succeedOn("n1").withResult(equalTo(Seq(NodeStatement("n1", None) : Statement)))
       }
 
       "parse one assignment statement" in {
-        statement_list must succeedOn("a = b").withResult(Seq(AssignmentStatement("a", "b") : Statement))
+        statement_list must succeedOn("a = b").withResult(equalTo(Seq(AssignmentStatement("a", "b") : Statement)))
       }
 
       "parse one assignment statement with a trailing semi-colon" in {
-        statement_list must succeedOn("a = b;").withResult(Seq(AssignmentStatement("a", "b") : Statement))
+        statement_list must succeedOn("a = b;").withResult(equalTo(Seq(AssignmentStatement("a", "b") : Statement)))
       }
 
       "parse two assignment statements" in {
-        statement_list must succeedOn("a = b ; c = d").withResult(Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d")))
+        statement_list must succeedOn("a = b ; c = d").withResult(equalTo(Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d"))))
       }
     }
   }

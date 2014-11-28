@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.co.turingatemyhamster</groupId>
         <artifactId>turingatemyhamster_parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>graphviz-s</artifactId>
@@ -60,13 +60,13 @@
 
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.10</artifactId>
+            <artifactId>specs2_${scala.epoc}</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.scalacheck</groupId>
-            <artifactId>scalacheck_2.10</artifactId>
+            <artifactId>scalacheck_${scala.epoc}</artifactId>
             <scope>test</scope>
         </dependency>
 
