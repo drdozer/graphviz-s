@@ -28,6 +28,6 @@ object SimpleGraph {
     val gg = dot2dot[Graph, Graph](g)
 
     println("Resulting graph:")
-    println(gg)
+    renderGraph(gg, System.out)
   }
 }
