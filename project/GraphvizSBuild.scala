@@ -22,7 +22,8 @@ object GraphvizSBuild extends Build {
     resolvers += Resolver.url(
       "bintray-scalajs-releases",
       url("http://dl.bintray.com/scala-js/scala-js-releases/"))(
-        Resolver.ivyStylePatterns)
+        Resolver.ivyStylePatterns),
+    resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
   )
 
   lazy val graphvizS            = module.project(graphvizSPlatformJvm, graphvizSPlatformJs)
