@@ -18,7 +18,11 @@ object GraphvizSBuild extends Build {
     scalaVersion := "2.11.4",
     crossScalaVersions := Seq("2.11.4", "2.11.2"),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
-    version := "0.3.0"
+    version := "0.3.0",
+    resolvers += Resolver.url(
+      "bintray-scalajs-releases",
+      url("http://dl.bintray.com/scala-js/scala-js-releases/"))(
+        Resolver.ivyStylePatterns)
   )
 
   lazy val graphvizS            = module.project(graphvizSPlatformJvm, graphvizSPlatformJs)
