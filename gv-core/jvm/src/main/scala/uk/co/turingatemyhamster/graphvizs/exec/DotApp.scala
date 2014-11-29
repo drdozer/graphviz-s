@@ -12,7 +12,10 @@ import sys.process.Process
 
 case class DotApp(binary: File, opts: DotOpts) {
 
-  val process = Process(binary.getAbsolutePath, opts.generate)
+  val process = {
+    System.out.println(s"Executing ${binary.getAbsolutePath} with options ${opts.generate}")
+    Process(binary.getAbsolutePath, opts.generate)
+  }
 
 }
 
@@ -24,11 +27,12 @@ case class DotApp(binary: File, opts: DotOpts) {
  *
  * @author Matthew Pocock
  */
-case class DotOpts(layout: Option[DotLayout], format: Option[DotFormat], outFile: Option[File] = None) {
+case class DotOpts(layout: Option[DotLayout] = None, format: Option[DotFormat] = None, outFile: Option[File] = None, optionalS: Seq[String] = Seq()) {
   def generate = List() ++
     (layout map (l => "-K" :: l.name :: Nil)).getOrElse(Nil) ++
     (format map (f => "-T" :: f.format.mkString(":") :: Nil)).getOrElse(Nil) ++
-    (outFile map (f => "-o" :: f.getAbsolutePath :: Nil)).getOrElse(Nil)
+    (outFile map (f => "-o" :: f.getAbsolutePath :: Nil)).getOrElse(Nil) ++
+    optionalS
 }
 
 /**

@@ -16,8 +16,8 @@ object GraphvizSBuild extends Build {
   lazy val core            = gvCore.project(corePlatformJvm, corePlatformJs)
   lazy val corePlatformJvm = gvCore.jvmProject(coreSharedJvm).settings(corePlatformJvmSettings : _*)
   lazy val corePlatformJs  = gvCore.jsProject(coreSharedJs)
-  lazy val coreSharedJvm   = gvCore.jvmShared().settings(coreSharedSettings : _*)
-  lazy val coreSharedJs    = gvCore.jsShared(coreSharedJvm).settings(coreSharedSettings : _*)
+  lazy val coreSharedJvm   = gvCore.jvmShared().settings(coreSharedSettingsJvm : _*)
+  lazy val coreSharedJs    = gvCore.jsShared(coreSharedJvm).settings(coreSharedSettingsJs : _*)
 
   val gvClientServer = XModule(id = "gv-clientServer", defaultSettings = buildSettings, baseDir = "gv-clientServer")
 
@@ -27,8 +27,12 @@ object GraphvizSBuild extends Build {
   lazy val clientServerSharedJvm    = gvClientServer.jvmShared().dependsOn(coreSharedJvm)
   lazy val clientServerSharedJs     = gvClientServer.jsShared(clientServerSharedJvm).dependsOn(coreSharedJs)
 
-  lazy val coreSharedSettings = Seq(
-    libraryDependencies ++= Seq("org.scalajs" %%%! "scala-parser-combinators" % "1.0.2")
+  lazy val coreSharedSettingsJvm = Seq(
+    libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2")
+  )
+
+  lazy val coreSharedSettingsJs = Seq(
+    libraryDependencies ++= Seq("org.scalajs" %%% "scala-parser-combinators" % "1.0.2")
   )
 
   lazy val buildSettings: Seq[Setting[_]] = Seq(
@@ -42,7 +46,8 @@ object GraphvizSBuild extends Build {
       url("http://dl.bintray.com/scala-js/scala-js-releases/"))(
         Resolver.ivyStylePatterns),
     resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo),
-    resolvers += "spray repo" at "http://repo.spray.io"
+    resolvers += "spray repo" at "http://repo.spray.io",
+    scalacOptions ++= Seq("-Ylog-classpath")
   )
 
   lazy val corePlatformJvmSettings = Seq(
@@ -52,7 +57,9 @@ object GraphvizSBuild extends Build {
   lazy val clientServerPlatformJvmSettings = Seq(
     libraryDependencies ++= Seq(
       "io.spray" %% "spray-routing" % "1.3.2",
-      "com.typesafe.akka" %% "akka-actor" % "2.3.7"
+      "io.spray" %% "spray-can" % "1.3.2",
+      "com.typesafe.akka" %% "akka-actor" % "2.3.7",
+      "com.scalatags" %% "scalatags" % "0.4.2"
     )
   )
 }

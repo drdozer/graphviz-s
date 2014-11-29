@@ -36,10 +36,10 @@ trait Exec extends GraphHandlers with StringHandlers with FileHandlers {
    * @tparam To         the output type
    * @return            a `To` representing the output of dot
    */
-  def dot2dot[From, To](from: From, format: DotFormat = DotFormat.dot)
+  def dot2dot[From, To](from: From, layout: DotLayout = DotLayout.dot, format: DotFormat = DotFormat.dot)
                                        (implicit inputFrom: InputHandler[From], outputTo: OutputHandler[To]): To =
   {
-    val app = DotApp(dotBinary, outputTo.processOpts(DotOpts(Some(DotLayout.dot), Some(format))))
+    val app = DotApp(dotBinary, outputTo.processOpts(DotOpts(Some(layout), Some(format))))
 
     val errHandler = stringOutputHandler
 
@@ -49,6 +49,22 @@ trait Exec extends GraphHandlers with StringHandlers with FileHandlers {
     proc.exitValue() match {
       case 0 => outputTo.value
       case x => sys.error("Dot exited with error code: " + x + " with output:\n" + errHandler.value)
+    }
+  }
+
+  def dotVersion(): (Int, String) = {
+    val app = DotApp(dotBinary, DotOpts(optionalS = Seq("-V")))
+
+    val inputHandler = StringInputHandler
+    val outputHandler = stringOutputHandler
+    val errHandler = stringOutputHandler
+
+    val io = new ProcessIO(inputHandler.handle(""), outputHandler.handle, errHandler.handle, false)
+
+    val proc = app.process run io
+    proc.exitValue() match {
+      case 0 => (0, outputHandler.value)
+      case err => (err, errHandler.value)
     }
   }
 }
