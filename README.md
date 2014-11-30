@@ -10,7 +10,7 @@ To call the graphviz binaries, you must have graphviz installed for your system.
 
 Use:
 
-```
+```scala
 import uk.co.turingatemyhamster.graphvizs._
 import uk.co.turingatemyhamster.graphvizs.dsl._
 import uk.co.turingatemyhamster.graphvizs.exec._
