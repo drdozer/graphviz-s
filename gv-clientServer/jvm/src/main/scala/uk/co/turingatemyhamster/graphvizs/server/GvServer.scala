@@ -44,6 +44,9 @@ object GvServer extends App with SimpleRoutingApp {
           }
         }
       }
+    } ~
+    get {
+      getFromResourceDirectory("")
     }
   }.onComplete {
     case Success(b) =>

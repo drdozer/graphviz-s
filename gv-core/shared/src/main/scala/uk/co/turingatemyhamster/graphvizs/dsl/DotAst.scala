@@ -74,7 +74,7 @@ trait DotAstBuilder extends DotAstConstructors {
 
 }
 
-class DotAstParser extends DotAstBuilder with DotParser {
+object DotAstParser extends DotAstBuilder with DotParser {
 
   lazy val id: Parser[ID]
   = id_identifier | id_numeral | id_quoted_string

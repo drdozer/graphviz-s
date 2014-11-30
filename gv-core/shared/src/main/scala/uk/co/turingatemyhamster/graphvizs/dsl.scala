@@ -15,7 +15,7 @@ import uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp.->
 package object dsl {
 
   def parseAsGraph(in: CharSequence): Graph = {
-    val parser = new DotAstParser
+    val parser = DotAstParser
     import parser._
     parser.parseAll(graph, in) match {
       case Success(g, _) => g
@@ -24,7 +24,7 @@ package object dsl {
   }
 
   def parseAsGraph(in: Reader): Graph = {
-    val parser = new DotAstParser
+    val parser = DotAstParser
     import parser._
     parser.parseAll(graph, in) match {
       case Success(g, _) => g

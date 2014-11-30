@@ -11,7 +11,8 @@ object Content {
 
     html(
       head(
-        "title".tag[String] apply ("Graphviz Interactive Editor")
+        "title".tag[String] apply ("Graphviz Interactive Editor"),
+        script(src := "/gv-clientserver-fastopt.js")
       ),
       body(
         div(id := "topBar"),
@@ -22,7 +23,7 @@ object Content {
         ),
         div(
           p("SVG rendering"),
-          div(id := "dotSvg")
+          iframe(id := "dotSvg", width := 800, height := 600)
         ),
         div(
           p("Dot rendered to SVG appears here"),
@@ -30,7 +31,10 @@ object Content {
         ),
         script(
           """
-            |Graphviz().wire("topBar", "dotTextArea", "dotSvg")
+            |Graphviz().wire(
+            |   document.getElementById('dotTextArea'),
+            |   document.getElementById('dotSvg'),
+            |   document.getElementById('renderedDot'))
           """.stripMargin)
       )
     )

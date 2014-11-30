@@ -23,7 +23,7 @@ object GraphvizSBuild extends Build {
 
   lazy val clientServer             = gvClientServer.project(clientServerPlatformJvm, clientServerPlatformJs)
   lazy val clientServerPlatformJvm  = gvClientServer.jvmProject(clientServerSharedJvm).dependsOn(corePlatformJvm).settings(clientServerPlatformJvmSettings : _*)
-  lazy val clientServerPlatformJs   = gvClientServer.jsProject(clientServerSharedJs).dependsOn(corePlatformJs)
+  lazy val clientServerPlatformJs   = gvClientServer.jsProject(clientServerSharedJs).dependsOn(corePlatformJs).settings(clientServerPlatformJsSettings : _*)
   lazy val clientServerSharedJvm    = gvClientServer.jvmShared().dependsOn(coreSharedJvm)
   lazy val clientServerSharedJs     = gvClientServer.jsShared(clientServerSharedJvm).dependsOn(coreSharedJs)
 
@@ -60,6 +60,19 @@ object GraphvizSBuild extends Build {
       "io.spray" %% "spray-can" % "1.3.2",
       "com.typesafe.akka" %% "akka-actor" % "2.3.7",
       "com.scalatags" %% "scalatags" % "0.4.2"
+    ),
+    (resources in Compile) += {
+      (fastOptJS in (clientServerPlatformJs, Compile)).value
+      (artifactPath in (clientServerPlatformJs, Compile, fastOptJS)).value
+    }
+  )
+
+  lazy val clientServerPlatformJsSettings = Seq(
+    libraryDependencies ++= Seq(
+      "uk.co.turingatemyhamster" %%% "scalatags-ext" % "0.1.1",
+      "com.scalatags" %%% "scalatags" % "0.4.2",
+      "com.scalarx" %%% "scalarx" % "0.2.6",
+      "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6"
     )
   )
 }
