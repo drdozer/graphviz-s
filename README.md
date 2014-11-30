@@ -40,7 +40,9 @@ println(gSvg)
 
 The server exposes the following endpoints:
 
-```/graphviz/$layout.$format```
+```
+/graphviz/$layout.$format
+```
 
 Post to this to receive back the output of dot. For example, `/graphviz/dot.dot` will invoke dot with the dot layout and
 return the result as dot text while `/graphviz/neato.svg` will invoke dot with the neato layout and svg output.
