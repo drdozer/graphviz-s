@@ -29,5 +29,9 @@ object SimpleGraph {
 
     println("Resulting graph:")
     renderGraph(gg, System.out)
+
+    println("Rendering as svg...")
+    val gSvg = dot2dot[Graph, String](g, format = DotFormat.svg)
+    println(gSvg)
   }
 }
