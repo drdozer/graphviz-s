@@ -5,6 +5,7 @@ import com.inthenow.sbt.scalajs._
 import com.inthenow.sbt.scalajs.SbtScalajs._
 import scala.scalajs.sbtplugin.ScalaJSPlugin._
 import ScalaJSKeys._
+import xerial.sbt.Pack._
 
 
 object GraphvizSBuild extends Build {
@@ -54,7 +55,7 @@ object GraphvizSBuild extends Build {
     libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "2.4.13" % "test")
   )
 
-  lazy val clientServerPlatformJvmSettings = Seq(
+  lazy val clientServerPlatformJvmSettings = packAutoSettings ++ Seq(
     libraryDependencies ++= Seq(
       "io.spray" %% "spray-routing" % "1.3.2",
       "io.spray" %% "spray-can" % "1.3.2",
