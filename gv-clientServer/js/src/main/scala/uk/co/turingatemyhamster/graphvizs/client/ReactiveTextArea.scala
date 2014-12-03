@@ -11,8 +11,8 @@ case class ReactiveTextArea(textArea: HTMLTextAreaElement) {
   val value = Var(textArea.value)
 
   def updateValue(e: Event) = {
-      value() = textArea.value
-    }
+    value() = textArea.value
+  }
   textArea.modifyWith(Events.input := updateValue _).render
 }
 

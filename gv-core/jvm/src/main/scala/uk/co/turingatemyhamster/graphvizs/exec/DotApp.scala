@@ -35,44 +35,6 @@ case class DotOpts(layout: Option[DotLayout] = None, format: Option[DotFormat] =
     optionalS
 }
 
-/**
- * Dot layout types.
- *
- * @author Matthew Pocock
- */
-case class DotLayout(name: String)
-object DotLayout {
-  val dot = DotLayout("dot")
-  val neato = DotLayout("neato")
-  val twopi = DotLayout("twopi")
-  val circo = DotLayout("circo")
-  val fdp   = DotLayout("fdp")
-  val sfdp  = DotLayout("sfdp")
-}
-
-/**
- * Dot output formats.
- *
- * @param format    the format name, renderer, formatter, e.g. "png", "png:gd"
- */
-case class DotFormat(format: List[String]) {
-  def this(f: String) = this(f :: Nil)
-}
-
-object DotFormat {
-  object dot    extends DotFormat("dot")
-  object ps     extends DotFormat("ps")
-  object svg    extends DotFormat("svg")
-  object svgz   extends DotFormat("svgz")
-  object fig    extends DotFormat("fig")
-  object mif    extends DotFormat("mif")
-  object hpgl   extends DotFormat("hpgl")
-  object pcl    extends DotFormat("pcl")
-  object png    extends DotFormat("png")
-  object gif    extends DotFormat("gif")
-  object cmapx  extends DotFormat("cmapx")
-
-}
 
 sealed trait StringFormat[F <: DotFormat]
 
