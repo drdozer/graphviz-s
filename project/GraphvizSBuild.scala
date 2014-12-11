@@ -43,7 +43,7 @@ object GraphvizSBuild extends Build {
     libraryDependencies ++= Seq("org.scalajs" %%% "scala-parser-combinators" % "1.0.2")
   )
 
-  lazy val buildSettings: Seq[Setting[_]] = Seq(
+  lazy val buildSettings: Seq[Setting[_]] = bintrayPublishSettings ++ Seq(
     resolvers += Resolver.url(
       "bintray-scalajs-releases",
       url("http://dl.bintray.com/scala-js/scala-js-releases/"))(
@@ -99,6 +99,10 @@ object GraphvizSBuild extends Build {
     logger.info(s"Travis branch reported as: $travisBranch")
 
     travisBranch getOrElse gitBranch
+
+    val branch = (travisBranch getOrElse gitBranch) replaceAll ("/", "_")
+    logger.info(s"Computed branch is $branch")
+    branch
   }
 
   def makeVersion(baseVersion: String): String = {
