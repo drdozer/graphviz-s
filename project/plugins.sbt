@@ -6,28 +6,24 @@ resolvers += Resolver.url(
   url("http://dl.bintray.com/content/sbt/sbt-plugin-releases"))(
   Resolver.ivyStylePatterns)
 
-resolvers += Resolver.sonatypeRepo("releases")
+libraryDependencies ++= Seq(
+  "org.eclipse.jgit" % "org.eclipse.jgit" % "3.0.0.201306101825-r"
+)
 
-resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers += Classpaths.sbtPluginReleases
 
-resolvers += "spray repo" at "http://repo.spray.io"
+resolvers += Classpaths.typesafeReleases
+
+addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.2")
+
+addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.5.1")
+
+addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 
 // Wrapper plugin for scalajs
 addSbtPlugin("com.github.inthenow" % "sbt-scalajs" % "0.56.6")
-
-//// END REQUIRED SETUP
-
-// Uncomment to get more information during initialization
-//logLevel := Level.Warn
-
-// Uncomment to use bintray publishing
-//addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.1")
-
-// Uncomment to add the sbt-release plugin - see https://github.com/sbt/sbt-release
-//addSbtPlugin("com.github.gseitz" % "sbt-release" % "0.8.5")
-
-// Uncomment to use utest - see https://github.com/lihaoyi/utest
-//addSbtPlugin("com.lihaoyi" % "utest-js-plugin" % "0.2.4")
 
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
 
