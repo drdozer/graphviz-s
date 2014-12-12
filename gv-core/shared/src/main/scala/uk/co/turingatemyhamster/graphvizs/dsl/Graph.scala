@@ -19,7 +19,7 @@ sealed trait Statement
 
 case class NodeStatement(node: NodeId, attributes: Option[AttributeList] = None) extends Statement
 
-case class EdgeStatement(node: Node, nodes: Seq[(EdgeOp, Node)], attributes: Option[AttributeList] = None) extends Statement {
+case class EdgeStatement(node: Node, nodes: Seq[(EdgeOp, Node)] = Seq(), attributes: Option[AttributeList] = None) extends Statement {
   def --> (n: Node): EdgeStatement = copy(nodes = nodes :+ (EdgeOp.->, n))
   def --- (n: Node): EdgeStatement = copy(nodes = nodes :+ (EdgeOp.--, n))
 }
@@ -102,9 +102,9 @@ case class Subgraph(id: Option[ID], statements: Seq[Statement]) extends Statemen
 }
 
 object Subgraph {
-  def apply(name: ID, aa: AssignmentStatement*): Subgraph = Subgraph(Some(name), aa)
+  def apply(name: ID, aa: Statement*): Subgraph = Subgraph(Some(name), aa)
   def apply(name: ID): Subgraph = Subgraph(Some(name), Seq())
-  def apply(aa: AssignmentStatement*): Subgraph = Subgraph(None, aa)
+  def apply(aa: Statement*): Subgraph = Subgraph(None, aa)
 }
 
 

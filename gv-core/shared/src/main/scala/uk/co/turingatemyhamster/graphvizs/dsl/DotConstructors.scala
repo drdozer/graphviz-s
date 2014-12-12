@@ -1,7 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
-import util.parsing.combinator.RegexParsers
-import util.matching.Regex
+import scala.util.parsing.combinator.RegexParsers
+import scala.util.matching.Regex
 
 /**
  * Constructors defining the DOT data structure.

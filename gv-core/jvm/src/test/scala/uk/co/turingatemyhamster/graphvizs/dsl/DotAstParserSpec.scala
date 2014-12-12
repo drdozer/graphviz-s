@@ -1,14 +1,12 @@
-package uk.co.turingatemyhamster.graphvizs.dsl
+package uk.co.turingatemyhamster.graphvizs
+package dsl
 
 import org.specs2.mutable._
 import org.specs2.matcher.ParserMatchers
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class DotAstParserSpec extends Specification with ParserMatchers {
 
-  val parsers = new DotAstParser
+  val parsers = DotAstParser
   import parsers._
 
   "the dot ast parser" ^
@@ -54,11 +52,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
       }
 
       "promote ID pair to an AttributeAssignment" in {
-        (("a" -> "b"): AttributeAssignment) must_== AttributeAssignment("a", "b")
-      }
-
-      "promote ID pair to an AttributeStatement" in {
-        (("a" -> "b") : AssignmentStatement) must_== AssignmentStatement("a", "b")
+        (("a" := "b"): AttributeAssignment) must_== AttributeAssignment("a", "b")
       }
 
     }
@@ -68,29 +62,12 @@ class DotAstParserSpec extends Specification with ParserMatchers {
     "utility constructors" should {
 
       "build attribute list from no args" in {
-        AttributeList() must_== AttributeList(None, None)
+        AttributeList() must_== AttributeList(Seq(), None)
       }
-
-      "build attribute list from varargs length 1" in {
-        AttributeList("a" -> "b") must_== AttributeList(Some(Seq(AttributeAssignment("a", "b"))))
-      }
-
-      "build attribute list from varargs length 2" in {
-        AttributeList("a" -> "b", "c" -> "d") must_==
-          AttributeList(Some(Seq(AttributeAssignment("a", "b"), AttributeAssignment("c", "d"))))
-      }
-
-      (Seq("a" -> "b", "c" -> "d") : AttributeList) must_==
-        AttributeList(Some(Seq(AttributeAssignment("a", "b"), AttributeAssignment("c", "d"))))
 
       "build subgraph from ID only" in {
         Subgraph("a") must_== Subgraph(Some("a" : ID), Seq())
       }
-
-      "build subgraph from statements only" in {
-        Subgraph("a" -> "b") must_== Subgraph(None, Seq(AssignmentStatement("a", "b")))
-      }
-
     }
   }
 
@@ -156,7 +133,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
       
       "parse a node statement with one numeric attribute" in {
         node_statement must succeedOn("n1 [a = 3]").withResult(
-          NodeStatement("n1", AttributeList("a" -> 3)))
+          NodeStatement("n1", Some(AttributeList(Seq("a" := 3)))))
       }
       
       "parse a directed edge statement with no attributes" in {
@@ -170,7 +147,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
 
       "parse an attribute statement" in {
         attribute_statement must succeedOn("graph [color = red]").withResult(
-          AttributeStatement(StatementType.Graph, AttributeList("color" -> "red")))
+          AttributeStatement(StatementType.Graph, AttributeList(Seq("color" := "red"))))
       }
 
       "parse an assignment statement" in {
@@ -217,11 +194,11 @@ class DotAstParserSpec extends Specification with ParserMatchers {
       }
 
       "parse a subgraph with one node" in {
-        subgraph must succeedOn("subgraph { a = b }").withResult(Subgraph("a" -> "b"))
+        subgraph must succeedOn("subgraph { a = b }").withResult(Subgraph(AssignmentStatement("a", "b")))
       }
 
       "parse a subgraph with two nodes" in {
-        subgraph must succeedOn("subgraph { a = b; c = d }").withResult(Subgraph("a" -> "b", "c" -> "d"))
+        subgraph must succeedOn("subgraph { a = b; c = d }").withResult(Subgraph(AssignmentStatement("a", "b"), AssignmentStatement("c", "d")))
       }
     }
   }
@@ -250,7 +227,7 @@ class DotAstParserSpec extends Specification with ParserMatchers {
         graph must succeedOn("""
                 digraph G {
                 	start -> a0;
-                }""").withResult(Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start") -> "a0")))
+                }""").withResult(Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start") --> "a0")))
       }
 
       "parse the cluster example" in {

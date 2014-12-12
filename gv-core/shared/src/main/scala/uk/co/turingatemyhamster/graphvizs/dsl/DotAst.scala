@@ -117,7 +117,7 @@ object DotAstParser extends DotAstBuilder with DotParser {
     (w  ^^^ CompassPt.W)  |
     (nw ^^^ CompassPt.NW) |
     (c  ^^^ CompassPt.C)  |
-    (id ^^ (CompassPt.or apply _))
+    (id ^^ CompassPt.or.apply)
 }
 
 class DotAstDestructors extends DotAst with DotDestructors {

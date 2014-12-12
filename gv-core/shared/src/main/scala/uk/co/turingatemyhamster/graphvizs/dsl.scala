@@ -2,7 +2,7 @@ package uk.co.turingatemyhamster.graphvizs
 
 import java.io.Reader
 
-import uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp.->
+import uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp.{--, ->}
 
 /**
  * Created by IntelliJ IDEA.
@@ -69,6 +69,8 @@ package object dsl {
   implicit class NodeSyntax[N](n: N)(implicit asN: N => Node) {
     def --> [N2](n2: N2)(implicit asN2: N2 => Node) =
       EdgeStatement(node = asN(n), nodes = Seq((->, asN2(n2))))
+    def --- [N2](n2: N2)(implicit asN2: N2 => Node) =
+      EdgeStatement(node = asN(n), nodes = Seq((--, asN2(n2))))
   }
   
    implicit class IdSyntax[D](id: D)(implicit asId: D => ID) {

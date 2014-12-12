@@ -2,13 +2,10 @@ package uk.co.turingatemyhamster.graphvizs.dsl
 
 import org.specs2.mutable.Specification
 import org.specs2.specification.Scope
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class DotAstRendererSpec extends Specification {
 
-  val parsers = new DotAstParser
+  val parsers = DotAstParser
   import parsers._
 
   "identifier renderer" should {
@@ -37,11 +34,11 @@ class DotAstRendererSpec extends Specification {
     }
 
     "render attribute with name and identifier value" in new renderer {
-      renderWith(render_attributeAssignment, "a" -> "b" : AttributeAssignment) must_== "a = b"
+      renderWith(render_attributeAssignment, "a" := "b" : AttributeAssignment) must_== "a = b"
     }
 
     "render attribute with name and numeric value" in new renderer {
-      renderWith(render_attributeAssignment, "a" -> 1 : AttributeAssignment) must_== "a = 1.0"
+      renderWith(render_attributeAssignment, "a" := 1 : AttributeAssignment) must_== "a = 1.0"
     }
   }
 
@@ -52,7 +49,7 @@ class DotAstRendererSpec extends Specification {
     }
 
     "render node with one numeric attribute" in new renderer {
-      renderWith(render_statement, NodeStatement("n1", AttributeList("a" -> 3))) must_== "n1 [ a = 3.0 ]"
+      renderWith(render_statement, NodeStatement("n1", Some(AttributeList(Seq("a" := 3))))) must_== "n1 [ a = 3.0 ]"
     }
 
     "render directed edge statement with no attributes" in new renderer {
@@ -61,12 +58,12 @@ class DotAstRendererSpec extends Specification {
     }
 
     "render directed edge statment with no attributes using EdgeStatement ops" in new renderer {
-      renderWith(render_statement, EdgeStatement("a") -> "b" -> "c") must_==
+      renderWith(render_statement, "a" --> "b" --> "c") must_==
         "a -> b -> c"
     }
 
     "render an attribute statement" in new renderer {
-      renderWith(render_statement, AttributeStatement(StatementType.Graph, AttributeList("color" -> "red"))) must_==
+      renderWith(render_statement, AttributeStatement(StatementType.Graph, AttributeList(Seq("color" := "red")))) must_==
         "graph [ color = red ]"
     }
 
@@ -105,11 +102,11 @@ class DotAstRendererSpec extends Specification {
     }
 
     "render a subgraph with one node" in new renderer {
-      renderWith(render_subgraph, Subgraph("a" -> "b")) must_== "subgraph {\na = b\n}\n"
+      renderWith(render_subgraph, Subgraph(AssignmentStatement("a", "b"))) must_== "subgraph {\na = b\n}\n"
     }
 
     "render a subgraph with two nodes" in new renderer {
-      renderWith(render_subgraph, Subgraph("a" -> "b", "c" -> "d")) must_== "subgraph {\na = b\nc = d\n}\n"
+      renderWith(render_subgraph, Subgraph(AssignmentStatement("a", "b"), AssignmentStatement("c", "d"))) must_== "subgraph {\na = b\nc = d\n}\n"
     }
 
   }

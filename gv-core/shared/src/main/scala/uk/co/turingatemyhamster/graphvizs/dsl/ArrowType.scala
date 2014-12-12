@@ -1,6 +1,6 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
-import util.parsing.combinator.RegexParsers
+import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Arrow types.

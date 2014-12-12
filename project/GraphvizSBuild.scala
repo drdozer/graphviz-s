@@ -22,7 +22,8 @@ object GraphvizSBuild extends Build {
   val gvCore = XModule(id = "gv-core", defaultSettings = buildSettings, baseDir = "gv-core")
 
   lazy val core            = gvCore.project(corePlatformJvm, corePlatformJs)
-  lazy val corePlatformJvm = gvCore.jvmProject(coreSharedJvm).settings(corePlatformJvmSettings : _*)
+  lazy val corePlatformJvm = gvCore.jvmProject(coreSharedJvm)
+    .settings(corePlatformJvmSettings : _*)
   lazy val corePlatformJs  = gvCore.jsProject(coreSharedJs)
   lazy val coreSharedJvm   = gvCore.jvmShared().settings(coreSharedSettingsJvm : _*)
   lazy val coreSharedJs    = gvCore.jsShared(coreSharedJvm).settings(coreSharedSettingsJs : _*)
@@ -35,14 +36,6 @@ object GraphvizSBuild extends Build {
   lazy val clientServerSharedJvm    = gvClientServer.jvmShared().dependsOn(coreSharedJvm)
   lazy val clientServerSharedJs     = gvClientServer.jsShared(clientServerSharedJvm).dependsOn(coreSharedJs)
 
-  lazy val coreSharedSettingsJvm = Seq(
-    libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2")
-  )
-
-  lazy val coreSharedSettingsJs = Seq(
-    libraryDependencies ++= Seq("org.scalajs" %%% "scala-parser-combinators" % "1.0.2")
-  )
-
   lazy val buildSettings: Seq[Setting[_]] = bintrayPublishSettings ++ Seq(
     resolvers += Resolver.url(
       "bintray-scalajs-releases",
@@ -50,6 +43,7 @@ object GraphvizSBuild extends Build {
         Resolver.ivyStylePatterns),
     resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo),
     resolvers += "spray repo" at "http://repo.spray.io",
+    resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
     scalacOptions ++= Seq("-Ylog-classpath"),
 
     organization := "uk.co.turingatemyhamster",
@@ -62,8 +56,20 @@ object GraphvizSBuild extends Build {
     licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
   )
 
+  lazy val coreSharedSettingsJvm = Seq(
+    libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2")
+  )
+
+  lazy val coreSharedSettingsJs = Seq(
+    libraryDependencies ++= Seq("org.scalajs" %%% "scala-parser-combinators" % "1.0.2")
+  )
+
   lazy val corePlatformJvmSettings = Seq(
-    libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "2.4.13" % "test")
+    libraryDependencies ++= Seq(
+      "org.specs2" %% "specs2-core" % "2.4.14" % "test",
+      "org.specs2" %% "specs2-matcher-extra" % "2.4.14" % "test",
+      "org.scalacheck" %% "scalacheck" % "1.12.1" % "test",
+      "junit" % "junit" % "4.12" % "test")
   )
 
   lazy val clientServerPlatformJvmSettings = packAutoSettings ++ Seq(
