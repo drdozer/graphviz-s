@@ -6,6 +6,7 @@ import com.inthenow.sbt.scalajs.SbtScalajs._
 import scala.scalajs.sbtplugin.ScalaJSPlugin._
 import ScalaJSKeys._
 import bintray.Plugin._
+import bintray.Keys._
 import org.eclipse.jgit.lib._
 import xerial.sbt.Pack._
 
@@ -13,9 +14,6 @@ import xerial.sbt.Pack._
 object GraphvizSBuild extends Build {
 
   val logger = ConsoleLogger()
-
-  logger.info("Java environment:")
-  logger.info(System.getenv.toString)
 
   val baseVersion = "0.3.1"
 
@@ -37,6 +35,11 @@ object GraphvizSBuild extends Build {
   lazy val clientServerSharedJs     = gvClientServer.jsShared(clientServerSharedJvm).dependsOn(coreSharedJs)
 
   lazy val buildSettings: Seq[Setting[_]] = bintrayPublishSettings ++ Seq(
+    organization := "uk.co.turingatemyhamster",
+    scalaVersion := "2.11.4",
+    crossScalaVersions := Seq("2.11.4", "2.10.4"),
+    scalacOptions ++= Seq("-deprecation", "-unchecked"),
+    version := makeVersion(baseVersion),
     resolvers += Resolver.url(
       "bintray-scalajs-releases",
       url("http://dl.bintray.com/scala-js/scala-js-releases/"))(
@@ -44,15 +47,10 @@ object GraphvizSBuild extends Build {
     resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo),
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
-    scalacOptions ++= Seq("-Ylog-classpath"),
-
-    organization := "uk.co.turingatemyhamster",
-    scalaVersion := "2.11.4",
-    crossScalaVersions := Seq("2.11.4", "2.10.4"),
-    scalacOptions ++= Seq("-deprecation", "-unchecked"),
-    version := makeVersion(baseVersion),
-    publishMavenStyle := false,
-    bintray.Keys.bintrayOrganization in bintray.Keys.bintray := None,
+    resolvers += "drdozer Bintray Repo" at "http://dl.bintray.com/content/drdozer/maven",
+    publishMavenStyle := true,
+    repository in bintray := "maven",
+    bintrayOrganization in bintray := None,
     licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
   )
 
@@ -113,7 +111,7 @@ object GraphvizSBuild extends Build {
 
   def makeVersion(baseVersion: String): String = {
     val branch = fetchGitBranch()
-    if(branch == "main") {
+    if(branch == "master") {
       baseVersion
     } else {
       val tjn = Option(System.getenv("TRAVIS_JOB_NUMBER"))
