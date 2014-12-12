@@ -1,16 +1,13 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
 import org.specs2.mutable.Specification
-import util.parsing.combinator.RegexParsers
+import scala.util.parsing.combinator.RegexParsers
 import org.specs2.matcher.ParserMatchers
 
 /**
  * Specification for arrow types.
  */
 
-@RunWith(classOf[JUnitRunner])
 class ArrowTypeSpec extends Specification with ParserMatchers {
 
   val parsers = ArrowTypeParsers

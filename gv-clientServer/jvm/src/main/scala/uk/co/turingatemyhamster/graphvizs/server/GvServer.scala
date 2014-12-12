@@ -20,7 +20,7 @@ object GvServer extends App with SimpleRoutingApp {
 
   val NotDot = """[^\.]*""".r
 
-  startServer(interface = "localhost", port = 8080) {
+  startServer(interface = "localhost", port = 9100) {
     path("graphviz" / NotDot ~ "." ~ NotDot) { (layout, format) =>
       post {
         entity(as[String]) { dotString =>
