@@ -9,4 +9,4 @@ env:
   - secure: Gn6bbwNlNQPMo6ffZtglbEWl4G+YyaVtG2TUSdALPd4GKO+cwzqISJkrWl/C6Yvdg/0Otm5jOcYqNKtGTznDtzlcvrwi7aSS+GyCuUbjkH9vc0aRPVVTmlV/j1d6vD7OePHyWcYfro1IrRbuRDVDM+rdNGbC05azi7h0HM77O2U=
 after_success:
 - |
-  test "${TRAVIS_PULL_REQUEST}" = 'false' && test "${TRAVIS_JDK_VERSION}" = 'oraclejdk7' && sh "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt publish;
+  #test "${TRAVIS_PULL_REQUEST}" = 'false' && test "${TRAVIS_JDK_VERSION}" = 'oraclejdk7' && sh "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt publish;
