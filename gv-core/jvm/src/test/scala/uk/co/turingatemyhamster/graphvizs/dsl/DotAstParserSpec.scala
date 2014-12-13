@@ -208,19 +208,47 @@ class DotAstParserSpec extends Specification with ParserMatchers {
     "graph parser" should {
 
       "parse an empty graph" in {
-        graph must succeedOn("""graph {}""").withResult(Graph(false, GraphType.Graph, None, Seq()))
+        graph must succeedOn("""graph {}""").withResult(Graph(
+          strict = false,
+          graphType = GraphType.Graph,
+          id = None,
+          statements = Seq()))
+      }
+
+      "parse an empty named graph" in {
+        graph must succeedOn("""graph g {}""").withResult(Graph(
+          strict = false,
+          graphType = GraphType.Graph,
+          id = Some(ID("g")),
+          statements = Seq()))
       }
       
       "parse an empty digraph" in {
-        graph must succeedOn("""digraph {}""").withResult(Graph(false, GraphType.Digraph, None, Seq()))
+        graph must succeedOn("""digraph {}""").withResult(Graph(
+          strict = false,
+          graphType = GraphType.Digraph,
+          id = None,
+          statements = Seq()))
+      }
+
+      "parse an empty named digraph" in {
+        graph must succeedOn("""digraph g {}""").withResult(Graph(
+          strict = false,
+          graphType = GraphType.Digraph,
+          id = Some(ID("g")),
+          statements = Seq()))
       }
 
       "parse a strict, empty graph" in {
-        graph must succeedOn("""strict graph {}""").withResult(Graph(true, GraphType.Graph, None, Seq()))
+        graph must succeedOn("""strict graph {}""").withResult(Graph(
+          strict = true,
+          graphType = GraphType.Graph,
+          id = None,
+          statements = Seq()))
       }
 
       "parse a named, strict, empty graph" in {
-        graph must succeedOn("""strict graph G {}""").withResult(Graph(true, GraphType.Graph, Some("G"), Seq()))
+        graph must succeedOn("""strict graph G {}""").withResult(Graph(strict = true, GraphType.Graph, Some("G"), Seq()))
       }
 
       "parse a named digraph with one edge" in {
@@ -228,6 +256,28 @@ class DotAstParserSpec extends Specification with ParserMatchers {
                 digraph G {
                 	start -> a0;
                 }""").withResult(Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start") --> "a0")))
+      }
+
+//      "parse the hello world example" in {
+//        graph must succeedOn(
+//          """
+//            |
+//            | digraph g {
+//            |   "hello" -> "world"
+//            | }
+//            |
+//          """.stripMargin)
+//      }
+
+      "parse the trimmed hello world example" in {
+        graph must succeedOn(
+          """
+            |
+            | digraph g {
+            |   "hello" -> "world"
+            | }
+            |
+          """.stripMargin.trim)
       }
 
       "parse the cluster example" in {

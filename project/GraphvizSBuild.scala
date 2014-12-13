@@ -9,6 +9,7 @@ import bintray.Plugin._
 import bintray.Keys._
 import org.eclipse.jgit.lib._
 import xerial.sbt.Pack._
+import spray.revolver.RevolverPlugin._
 
 
 object GraphvizSBuild extends Build {
@@ -70,7 +71,7 @@ object GraphvizSBuild extends Build {
       "junit" % "junit" % "4.12" % "test")
   )
 
-  lazy val clientServerPlatformJvmSettings = packAutoSettings ++ Seq(
+  lazy val clientServerPlatformJvmSettings = packAutoSettings ++ Revolver.settings ++ Seq(
     libraryDependencies ++= Seq(
       "io.spray" %% "spray-routing" % "1.3.2",
       "io.spray" %% "spray-can" % "1.3.2",
