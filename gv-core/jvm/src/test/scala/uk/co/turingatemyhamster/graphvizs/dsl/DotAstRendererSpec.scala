@@ -106,7 +106,7 @@ class DotAstRendererSpec extends Specification {
     }
 
     "render a subgraph with two nodes" in new renderer {
-      renderWith(render_subgraph, Subgraph(AssignmentStatement("a", "b"), AssignmentStatement("c", "d"))) must_== "subgraph {\na = b\nc = d\n}\n"
+      renderWith(render_subgraph, Subgraph(AssignmentStatement("a", "b"), AssignmentStatement("c", "d")) must_== "subgraph {\na = b\nc = d\n}\n"
     }
 
   }

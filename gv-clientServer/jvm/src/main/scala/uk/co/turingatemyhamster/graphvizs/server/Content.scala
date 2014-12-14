@@ -20,7 +20,8 @@ object Content {
         div(
           p("Edit your graphviz dot text here"),
           textarea(id := "dotTextArea", rows := 20, cols :=80),
-          select(id := "layouts")
+          select(id := "layouts"),
+          span(id := "status")
         ),
         div(
           p("SVG rendering"),
@@ -35,6 +36,7 @@ object Content {
             |Graphviz().wire(
             |   document.getElementById('dotTextArea'),
             |   document.getElementById('layouts'),
+            |   document.getElementById('status'),
             |   document.getElementById('dotSvg'),
             |   document.getElementById('renderedDot'))
           """.stripMargin)
