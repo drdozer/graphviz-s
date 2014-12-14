@@ -56,11 +56,17 @@ object GraphvizSBuild extends Build {
   )
 
   lazy val coreSharedSettingsJvm = Seq(
-    libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2")
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2",
+      "com.lihaoyi" %% "utest" % "0.2.4" % "test"
+    )
   )
 
-  lazy val coreSharedSettingsJs = Seq(
-    libraryDependencies ++= Seq("org.scalajs" %%% "scala-parser-combinators" % "1.0.2")
+  lazy val coreSharedSettingsJs = utest.jsrunner.Plugin.utestJsSettings ++ Seq(
+    libraryDependencies ++= Seq(
+      "org.scalajs" %%% "scala-parser-combinators" % "1.0.2",
+      "com.lihaoyi" %% "utest" % "0.2.4" % "test"
+    )
   )
 
   lazy val corePlatformJvmSettings = Seq(
