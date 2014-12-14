@@ -43,6 +43,8 @@ trait DotParser extends DotConstructors with RegexParsers {
   val semi_colon: Parser[String] = ";"
   val comma: Parser[String] = ","
   val equ: Parser[String] = "="
+  val hash: Parser[String] = "#"
+  val notNewline: Parser[String] = """[^\n]""".r
 
   val directed_edge: Parser[String] = "->"
   val undirected_edge: Parser[String] = "--"
@@ -54,6 +56,8 @@ trait DotParser extends DotConstructors with RegexParsers {
   val NODE: Parser[String] = "(?i)node".r
   val EDGE: Parser[String] = "(?i)edge".r
   val SUBGRAPH: Parser[String] = "(?i)subgraph".r
+
+  override protected val whiteSpace = """\s*((#[^\n]*)?\s+)+""".r
 
   // identifier types
   val identifier: Parser[String] = ID.IdRx
@@ -70,7 +74,6 @@ trait DotParser extends DotConstructors with RegexParsers {
   val w:  Parser[String] = "(?i)w".r
   val nw: Parser[String] = "(?i)nw".r
   val c:  Parser[String] = "(?i)c".r
-
 
   // productions
   lazy val graph: Parser[T_Graph] = STRICT.? ~ graph_type ~ id.? ~ l_bracket ~ statement_list ~ r_bracket ^^ {

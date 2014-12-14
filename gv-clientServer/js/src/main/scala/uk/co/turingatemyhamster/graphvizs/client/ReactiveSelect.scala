@@ -12,6 +12,7 @@ import scalatags.ext.Framework._
  */
 case class ReactiveSelect(select: HTMLSelectElement) {
   val value = Var(select.value)
+  println(s"Initialised reactive select with value: ${value()} using ${select.value}")
 
   def updateValue(e: Event) = {
     value() = select.value

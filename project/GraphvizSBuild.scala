@@ -9,13 +9,14 @@ import bintray.Plugin._
 import bintray.Keys._
 import org.eclipse.jgit.lib._
 import xerial.sbt.Pack._
+import spray.revolver.RevolverPlugin._
 
 
 object GraphvizSBuild extends Build {
 
   val logger = ConsoleLogger()
 
-  val baseVersion = "0.3.1"
+  val baseVersion = "0.3.2"
 
   val gvCore = XModule(id = "gv-core", defaultSettings = buildSettings, baseDir = "gv-core")
 
@@ -55,11 +56,17 @@ object GraphvizSBuild extends Build {
   )
 
   lazy val coreSharedSettingsJvm = Seq(
-    libraryDependencies ++= Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2")
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2",
+      "com.lihaoyi" %% "utest" % "0.2.4" % "test"
+    )
   )
 
-  lazy val coreSharedSettingsJs = Seq(
-    libraryDependencies ++= Seq("org.scalajs" %%% "scala-parser-combinators" % "1.0.2")
+  lazy val coreSharedSettingsJs = utest.jsrunner.Plugin.utestJsSettings ++ Seq(
+    libraryDependencies ++= Seq(
+      "org.scalajs" %%% "scala-parser-combinators" % "1.0.2",
+      "com.lihaoyi" %% "utest" % "0.2.4" % "test"
+    )
   )
 
   lazy val corePlatformJvmSettings = Seq(
@@ -70,7 +77,7 @@ object GraphvizSBuild extends Build {
       "junit" % "junit" % "4.12" % "test")
   )
 
-  lazy val clientServerPlatformJvmSettings = packAutoSettings ++ Seq(
+  lazy val clientServerPlatformJvmSettings = packAutoSettings ++ Revolver.settings ++ Seq(
     libraryDependencies ++= Seq(
       "io.spray" %% "spray-routing" % "1.3.2",
       "io.spray" %% "spray-can" % "1.3.2",
