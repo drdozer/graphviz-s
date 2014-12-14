@@ -16,7 +16,7 @@ object GraphvizSBuild extends Build {
 
   val logger = ConsoleLogger()
 
-  val baseVersion = "0.3.1"
+  val baseVersion = "0.3.2"
 
   val gvCore = XModule(id = "gv-core", defaultSettings = buildSettings, baseDir = "gv-core")
 
