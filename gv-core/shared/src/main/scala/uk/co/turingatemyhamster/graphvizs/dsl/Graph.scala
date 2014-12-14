@@ -115,7 +115,7 @@ object ID {
   case class Quoted(value: String) extends ID // any double-quoted string ("...") possibly containing escaped quotes ('")
   //case class Html(value: Elem) extends ID // an HTML block
 
-  val IdRx = """([\w&&[\D]][\w]*)""".r
+  val IdRx = """([a-zA-Z_][\w]*)""".r
   val NumeralRx = """-?((\.\d+)|(\d+(\.\d*)?))""".r
 
   def apply(id: String): ID = {

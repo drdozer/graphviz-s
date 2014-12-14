@@ -6,14 +6,14 @@ import exec._
 
 import org.scalajs.dom.extensions.Ajax
 
-import org.scalajs.dom.{HTMLSelectElement, HTMLIFrameElement, HTMLTextAreaElement}
+import org.scalajs.dom.{HTMLSpanElement, HTMLSelectElement, HTMLIFrameElement, HTMLTextAreaElement}
 import rx._
 import rx.ops._
 
 import scala.concurrent.duration._
 import scala.scalajs.js.Dynamic
 import scala.scalajs.js.annotation.JSExport
-import scala.util.Success
+import scala.util.{Failure, Success}
 import scalatags.ext.Framework._
 import scalatags.JsDom.all.{width => _, height => _, _}
 
@@ -28,6 +28,7 @@ object Graphviz {
   @JSExport
   def wire(dotTextArea: HTMLTextAreaElement,
            layouts: HTMLSelectElement,
+           status: HTMLSpanElement,
            dotSvg: HTMLIFrameElement,
            renderedDot: HTMLTextAreaElement): Unit =
   {
@@ -53,7 +54,7 @@ object Graphviz {
 
     val rxDTA = ReactiveTextArea(dotTextArea)
 
-    val gvTextDebursted = rxDTA.value.debounce(5 seconds)
+    val gvTextDebursted = rxDTA.value.debounce(1 seconds)
 
     Obs(gvTextDebursted) {
       println("gvTextDebursted")
@@ -102,6 +103,8 @@ object Graphviz {
       println(s"gvParsedLayout: ${gvParsedLayout()}")
     }
 
+    val busy = Var(false)
+
     Obs(gvParsedLayout) {
       for {
         _ <- gvParsedLayout()
@@ -109,13 +112,32 @@ object Graphviz {
         lo <- rxLayout()
       } {
         println(s"Triggering gv call with ${gvParsedLayout()}")
-        Ajax.post(s"/graphviz/${lo}.svg", text) onSuccess { case req =>
-          println("Got response")
-          renderedDot.value = req.responseText
-          dotSvg.src = "data:image/svg+xml;charset=utf-8," + Dynamic.global.escape(req.responseText)
+        busy() = true
+        Ajax.post(s"/graphviz/${lo}.svg", text) onComplete  {
+          case Success(req) =>
+            println("Got response")
+            renderedDot.value = req.responseText
+            dotSvg.src = "data:image/svg+xml;charset=utf-8," + Dynamic.global.escape(req.responseText)
+            busy() = false
+          case Failure(t) =>
+            println("Failed to process")
+            busy() = false
         }
       }
     }
+
+    var statusText = Rx {
+      val vi =
+        if(gvValid().isDefined) "valid"
+        else if(gvInvalid().isDefined) "invalid"
+        else ""
+      val bsy =
+        if(busy()) " (working)"
+        else ""
+      s"$vi$bsy"
+    }
+
+    status.modifyWith(statusText).render
   }
 
 }
