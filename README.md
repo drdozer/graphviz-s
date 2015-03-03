@@ -10,6 +10,15 @@ To call the graphviz binaries, you must have graphviz installed for your system.
 
 Use:
 
+Add a resolver to `build.sbt`:
+```scala
+resolvers += "bintray-drdozer" at "http://dl.bintray.com/content/drdozer/maven"
+```
+and the dependency to your `libraryDependencies`:
+```scala
+libraryDependencies += "uk.co.turingatemyhamster" %% "gv-core" % "0.3.2"
+```
+
 ```scala
 import uk.co.turingatemyhamster.graphvizs._
 import uk.co.turingatemyhamster.graphvizs.dsl._
