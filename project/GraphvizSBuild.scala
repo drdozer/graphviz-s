@@ -1,4 +1,7 @@
 
+import com.typesafe.sbt.less.Import.LessKeys
+import com.typesafe.sbt.web.Import._
+import com.typesafe.sbt.web.SbtWeb
 import sbt._
 import sbt.Keys._
 import com.inthenow.sbt.scalajs._
@@ -16,7 +19,7 @@ object GraphvizSBuild extends Build {
 
   val logger = ConsoleLogger()
 
-  val baseVersion = "0.3.2"
+  val baseVersion = "0.3.3"
 
   val gvCore = XModule(id = "gv-core", defaultSettings = buildSettings, baseDir = "gv-core")
 
@@ -24,14 +27,19 @@ object GraphvizSBuild extends Build {
   lazy val corePlatformJvm = gvCore.jvmProject(coreSharedJvm)
     .settings(corePlatformJvmSettings : _*)
   lazy val corePlatformJs  = gvCore.jsProject(coreSharedJs)
-  lazy val coreSharedJvm   = gvCore.jvmShared().settings(coreSharedSettingsJvm : _*)
-  lazy val coreSharedJs    = gvCore.jsShared(coreSharedJvm).settings(coreSharedSettingsJs : _*)
+  lazy val coreSharedJvm   = gvCore.jvmShared()
+    .settings(coreSharedSettingsJvm : _*)
+  lazy val coreSharedJs    = gvCore.jsShared(coreSharedJvm)
+    .settings(coreSharedSettingsJs : _*)
 
   val gvClientServer = XModule(id = "gv-clientServer", defaultSettings = buildSettings, baseDir = "gv-clientServer")
 
   lazy val clientServer             = gvClientServer.project(clientServerPlatformJvm, clientServerPlatformJs)
-  lazy val clientServerPlatformJvm  = gvClientServer.jvmProject(clientServerSharedJvm).dependsOn(corePlatformJvm).settings(clientServerPlatformJvmSettings : _*)
-  lazy val clientServerPlatformJs   = gvClientServer.jsProject(clientServerSharedJs).dependsOn(corePlatformJs).settings(clientServerPlatformJsSettings : _*)
+  lazy val clientServerPlatformJvm  = gvClientServer.jvmProject(clientServerSharedJvm).dependsOn(corePlatformJvm)
+    .enablePlugins(SbtWeb)
+    .settings(clientServerPlatformJvmSettings : _*)
+  lazy val clientServerPlatformJs   = gvClientServer.jsProject(clientServerSharedJs).dependsOn(corePlatformJs)
+    .settings(clientServerPlatformJsSettings : _*)
   lazy val clientServerSharedJvm    = gvClientServer.jvmShared().dependsOn(coreSharedJvm)
   lazy val clientServerSharedJs     = gvClientServer.jsShared(clientServerSharedJvm).dependsOn(coreSharedJs)
 
@@ -45,6 +53,7 @@ object GraphvizSBuild extends Build {
       "bintray-scalajs-releases",
       url("http://dl.bintray.com/scala-js/scala-js-releases/"))(
         Resolver.ivyStylePatterns),
+    resolvers += "bintray/non" at "http://dl.bintray.com/non/maven",
     resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo),
     resolvers += "spray repo" at "http://repo.spray.io",
     resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases",
@@ -55,7 +64,7 @@ object GraphvizSBuild extends Build {
     licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
   )
 
-  lazy val coreSharedSettingsJvm = Seq(
+  lazy val coreSharedSettingsJvm = utest.jsrunner.Plugin.utestJvmSettings ++ Seq(
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2",
       "com.lihaoyi" %% "utest" % "0.2.4" % "test"
@@ -81,13 +90,19 @@ object GraphvizSBuild extends Build {
     libraryDependencies ++= Seq(
       "io.spray" %% "spray-routing" % "1.3.2",
       "io.spray" %% "spray-can" % "1.3.2",
-      "com.typesafe.akka" %% "akka-actor" % "2.3.7",
-      "com.scalatags" %% "scalatags" % "0.4.2"
+      "com.scalatags" %% "scalatags" % "0.4.2",
+      "com.typesafe.akka" %% "akka-actor" % "2.3.7"
     ),
+    ScalaJSKeys.emitSourceMaps := true,
+    (crossTarget in (clientServerPlatformJs, Compile, fastOptJS)) := crossTarget.value / "classes" / "public" / "javascript",
     (resources in Compile) += {
       (fastOptJS in (clientServerPlatformJs, Compile)).value
       (artifactPath in (clientServerPlatformJs, Compile, fastOptJS)).value
-    }
+    },
+    includeFilter in (Assets, LessKeys.less) := "*.less",
+    excludeFilter in (Assets, LessKeys.less) := "_*.less",
+    WebKeys.packagePrefix in Assets := "public/",
+    (managedClasspath in Runtime) += (packageBin in Assets).value
   )
 
   lazy val clientServerPlatformJsSettings = Seq(

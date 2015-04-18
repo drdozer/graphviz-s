@@ -12,7 +12,7 @@ object Content {
     html(
       head(
         "title".tag[String] apply ("Graphviz Interactive Editor"),
-        script(src := "/gv-clientserver-fastopt.js")
+        script(src := "./public/javascript/gv-clientserver-fastopt.js")
       ),
       body(
         div(id := "topBar"),

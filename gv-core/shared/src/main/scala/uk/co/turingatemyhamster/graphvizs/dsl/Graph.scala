@@ -97,16 +97,9 @@ object AttributeAssignment {
 
 case class AssignmentStatement(name: ID,  value: ID) extends Statement
 
-case class Subgraph(id: Option[ID], statements: Seq[Statement]) extends Statement with Node {
-  def addStatements(stmts: Seq[Statement]) = copy(statements = statements ++ stmts)
+case class Subgraph(id: Option[ID] = None, statements: Seq[Statement] = Seq.empty) extends Statement with Node {
+  def withStatements(stmts: Seq[Statement]) = copy(statements = statements ++ stmts)
 }
-
-object Subgraph {
-  def apply(name: ID, aa: Statement*): Subgraph = Subgraph(Some(name), aa)
-  def apply(name: ID): Subgraph = Subgraph(Some(name), Seq())
-  def apply(aa: Statement*): Subgraph = Subgraph(None, aa)
-}
-
 
 sealed trait ID
 object ID {
