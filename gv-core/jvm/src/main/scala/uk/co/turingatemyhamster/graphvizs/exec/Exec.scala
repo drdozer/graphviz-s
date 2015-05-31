@@ -17,6 +17,12 @@ import javax.xml.parsers.SAXParserFactory
  * @author Matthew Pocock
  */
 
+object Exec {
+  def apply(binary: File) = new Exec { 
+    val dotBinary = binary 
+  }
+}
+
 trait Exec extends GraphHandlers with StringHandlers with FileHandlers {
 
   /**
