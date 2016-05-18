@@ -16,19 +16,8 @@ resolvers += Classpaths.typesafeReleases
 
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.2")
 
-addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.5.1")
-
-addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 
-// Wrapper plugin for scalajs
-addSbtPlugin("com.github.inthenow" % "sbt-scalajs" % "0.56.6")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.6")
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
-
-addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.6.5")
-
-addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.2")
-
-addSbtPlugin("com.lihaoyi" % "utest-js-plugin" % "0.2.4")
+addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.7.9")
