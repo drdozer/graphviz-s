@@ -1,14 +1,12 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * Arrow types.
  *
  * @param names  list of arrow names, maximum of 4
  * @author Matthew Pocock
  */
-case class ArrowType(names: List[ArrowName]) {
+case class ArrowType(names: Seq[ArrowName]) {
   def name = names.map(_.name).mkString
 }
 
@@ -161,26 +159,28 @@ object Shape {
  *
  * @author Matthew Pocock
  */
-object ArrowTypeParsers extends RegexParsers {
-  
+object ArrowTypeParsers {
+
+  import fastparse.all._
+
   val shape: Parser[Shape]
-  = ("box"      ^^^ Shape.Box) |
-    ("crow"     ^^^ Shape.Crow) |
-    ("diamond"  ^^^ Shape.Diamond) |
-    ("dot"      ^^^ Shape.Dot) |
-    ("inv"      ^^^ Shape.Inv) |
-    ("none"     ^^^ Shape.None) |
-    ("normal"   ^^^ Shape.Normal) |
-    ("tee"      ^^^ Shape.Tee) |
-    ("vee"      ^^^ Shape.Vee)
-  
-  val lr: Parser[LR] = ("l" ^^^ L) | ("r" ^^^ R)
+  = (("box": P0) map (_ => Shape.Box)) |
+    (("crow": P0) map (_ => Shape.Crow)) |
+    (("diamond": P0) map (_ => Shape.Diamond)) |
+    (("dot": P0) map (_ => Shape.Dot)) |
+    (("inv": P0) map (_ => Shape.Inv)) |
+    (("none": P0) map (_ => Shape.None)) |
+    (("normal": P0) map (_ => Shape.Normal)) |
+    (("tee": P0) map (_ => Shape.Tee)) |
+    (("vee": P0) map (_ => Shape.Vee))
 
-  val o: Parser[O.type] = "o" ^^^ O
+  val lr: Parser[LR] = (("l": P0) map (_ => L)) | (("r": P0) map (_ => R))
 
-  val modifiers: Parser[Modifiers] = o.? ~ lr.? ^^ { case o~lr => Modifiers(o, lr) }
+  val o: Parser[O.type] = ("o": P0) map (_ => O)
 
-  val arrowName: Parser[ArrowName] = modifiers ~ shape ^^ { case m~s => ArrowName(m, s) }
+  val modifiers: Parser[Modifiers] = P(o.? ~ lr.?) map { case (o, lr) => Modifiers(o, lr) }
 
-  val arrowType: Parser[ArrowType] = arrowName.* ^^ ArrowType
+  val arrowName: Parser[ArrowName] = P(modifiers ~ shape) map { case (m, s) => ArrowName(m, s) }
+
+  val arrowType: Parser[ArrowType] = P(arrowName.rep) map ArrowType.apply
 }

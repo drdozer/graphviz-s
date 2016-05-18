@@ -3,6 +3,8 @@ package uk.co.turingatemyhamster.graphvizs
 import java.io.Reader
 
 import uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp.{--, ->}
+import fastparse.all._
+import fastparse.core.Parsed.{Success, Failure}
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,21 +16,10 @@ import uk.co.turingatemyhamster.graphvizs.dsl.EdgeOp.{--, ->}
 
 package object dsl {
 
-  def parseAsGraph(in: CharSequence): Graph = {
-    val parser = DotAstParser
-    import parser._
-    parser.parseAll(graph, in) match {
+  def parseAsGraph(in: String): Graph = {
+    (DotAstParser.graph ~ End).parse(in) match {
       case Success(g, _) => g
-      case NoSuccess(msg, input) => sys.error("Unable to parse input: " + msg + " at " + input.pos);
-    }
-  }
-
-  def parseAsGraph(in: Reader): Graph = {
-    val parser = DotAstParser
-    import parser._
-    parser.parseAll(graph, in) match {
-      case Success(g, _) => g
-      case NoSuccess(msg, input) => sys.error("Unable to parse input: " + msg + " at " + input.pos);
+      case Failure(msg, pos, _) => sys.error(s"Unable to parse input: $msg at $pos");
     }
   }
   

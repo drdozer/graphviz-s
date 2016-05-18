@@ -1,7 +1,6 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
-import scala.util.parsing.combinator.RegexParsers
-import scala.util.matching.Regex
+import fastparse.all
 
 /**
  * Constructors defining the DOT data structure.
@@ -28,124 +27,117 @@ trait DotConstructors extends Dot {
 }
 
 /**
- * Parser for the DOT file format.
+ * P for the DOT file format.
  *
  * @author Matthew Pocock
  */
-trait DotParser extends DotConstructors with RegexParsers {
+trait DotParser extends DotConstructors {
+
+  import fastparse.all._
 
   // symbol literals
-  val l_bracket: Parser[String] = "{"
-  val r_bracket: Parser[String] = "}"
-  val l_box: Parser[String] = "["
-  val r_box: Parser[String] = "]"
-  val colon: Parser[String] = ":"
-  val semi_colon: Parser[String] = ";"
-  val comma: Parser[String] = ","
-  val equ: Parser[String] = "="
-  val hash: Parser[String] = "#"
-  val notNewline: Parser[String] = """[^\n]""".r
+  val l_bracket: P0 = "{"
+  val r_bracket: P0 = "}"
+  val l_box: P0 = "["
+  val r_box: P0 = "]"
+  val colon: P0 = ":"
+  val semi_colon: P0 = ";"
+  val comma: P0 = ","
+  val period: P0 = "."
+  val equ: P0 = "="
+  val hash: P0 = "#"
+  val notNewline: P0 = !("\n")
+  val dblQuote: P0 = "\""
 
-  val directed_edge: Parser[String] = "->"
-  val undirected_edge: Parser[String] = "--"
+  val directed_edge: P0 = "->"
+  val undirected_edge: P0 = "--"
   
   // keywords
-  val STRICT: Parser[String] = "(?i)strict".r
-  val GRAPH: Parser[String] = "(?i)graph".r
-  val DIGRAPH: Parser[String] = "(?i)digraph".r
-  val NODE: Parser[String] = "(?i)node".r
-  val EDGE: Parser[String] = "(?i)edge".r
-  val SUBGRAPH: Parser[String] = "(?i)subgraph".r
+  val STRICT = IgnoreCase("strict")
+  val GRAPH = IgnoreCase("graph")
+  val DIGRAPH = IgnoreCase("digraph")
+  val NODE = IgnoreCase("node")
+  val EDGE = IgnoreCase("edge")
+  val SUBGRAPH = IgnoreCase("subgraph")
 
-  override protected val whiteSpace = """\s*((#[^\n]*)?\s+)+""".r
+  val whiteSpace: P0 = (spaces_? ~ lineComment ~ spaces).rep(1)
+  val spaces = space.rep(1)
+  val spaces_? = space.rep
+  val lineComment = hash ~ notNewline.rep
+  val space = CharIn(Array('\n', '\r', ' '))
+
 
   // identifier types
-  val identifier: Parser[String] = ID.IdRx
-  val numeral: Parser[String] = ID.NumeralRx
-  val dblquoted: Parser[String] = """"([^"]|(\\"))*"""".r -> 1
+  val digit: P0 = P(CharIn('0' to '9'))
+  val identifier: P[String] = P(CharIn('a' to 'Z', "_") ~  P(CharIn('a' to 'Z', "_", '0' to '9')).rep).!
+  val numeral: P[String] = P(CharIn("-+").? ~ ((period ~ digit.rep(1))) | (digit.rep(1) ~ (period ~ digit.rep).?)).!
+  val dblquoted: P[String] = P(dblQuote ~ (!dblQuote).rep.! ~ dblQuote)
 
   // compass points
-  val n:  Parser[String] = "(?i)n".r
-  val ne: Parser[String] = "(?i)ne".r
-  val e:  Parser[String] = "(?i)e".r
-  val se: Parser[String] = "(?i)se".r
-  val s:  Parser[String] = "(?i)s".r
-  val sw: Parser[String] = "(?i)sw".r
-  val w:  Parser[String] = "(?i)w".r
-  val nw: Parser[String] = "(?i)nw".r
-  val c:  Parser[String] = "(?i)c".r
+  val n = IgnoreCase("n")
+  val ne = IgnoreCase("ne")
+  val e = IgnoreCase("e")
+  val se = IgnoreCase("se")
+  val s = IgnoreCase("s")
+  val sw = IgnoreCase("sw")
+  val w = IgnoreCase("w")
+  val nw = IgnoreCase("nw")
+  val c = IgnoreCase("c")
 
   // productions
-  lazy val graph: Parser[T_Graph] = STRICT.? ~ graph_type ~ id.? ~ l_bracket ~ statement_list ~ r_bracket ^^ {
-    case (str ~ gt ~ id ~ _ ~ stmts ~ _) => handle_graph(str.isDefined, gt, id, stmts)
+  lazy val graph: P[T_Graph] = P(STRICT.!.? ~ graph_type ~ id.? ~ l_bracket ~ statement_list ~ r_bracket) map {
+    case (str, gt, id, stmts) => handle_graph(str.isDefined, gt, id, stmts)
   }
-  
-  lazy val statement_list: Parser[Seq[T_Statement]] = (statement <~ semi_colon.?).*
 
-  lazy val statement: Parser[T_Statement]
+  lazy val statement_list: P[Seq[T_Statement]] = P((statement ~ semi_colon.?).rep)
+
+  lazy val statement: P[T_Statement]
   = assignment_statement |
     attribute_statement |
     subgraph |
     edge_statement |
     node_statement
 
-  lazy val attribute_statement: Parser[T_AttributeStatement] = statement_type ~ attribute_list ^^ {
-    case (st ~ al) => handle_attributeStatement(st, al)
+  lazy val attribute_statement: P[T_AttributeStatement] = P(statement_type ~ attribute_list) map {
+    case (st, al) => handle_attributeStatement(st, al)
   }
 
-  lazy val attribute_list: Parser[T_AttributeList] =
-  l_box ~ attributes ~ r_box ~ attribute_list.? ^^ { case (_ ~ al1 ~ _ ~ nxt) => handle_attributeList(al1, nxt) }
-  
-  lazy val attributes: Parser[Seq[T_AttributeAssignment]] = repsep(attribute_assignment, comma)
+  lazy val attribute_list: P[T_AttributeList] = P(l_box ~ attributes ~ r_box ~ attribute_list.?) map {
+    case (al1, nxt) => handle_attributeList(al1, nxt) }
 
-  lazy val attribute_assignment: Parser[T_AttributeAssignment] = id ~ (equ ~> id).? ^^ {
-    case name ~ value => handle_attributeAssignment(name, value)
+  lazy val attributes: P[Seq[T_AttributeAssignment]] = attribute_assignment.rep(sep = comma)
+
+  lazy val attribute_assignment: P[T_AttributeAssignment] = id ~ (equ ~ id).? map {
+    case (name, value) => handle_attributeAssignment(name, value)
   }
 
-  lazy val edge_statement: Parser[T_EdgeStatement] = node ~ edge_rhs ~ attribute_list.? ^^
-    { case n ~ ns ~ as => handle_edgeStatement(n, ns, as) }
-  
-  lazy val edge_rhs: Parser[Seq[(T_EdgeOp, T_Node)]] = ((edge_op ~ node) ^^ { case eo ~ n => (eo, n) }).+
+  lazy val edge_statement: P[T_EdgeStatement] = node ~ edge_rhs ~ attribute_list.? map
+    { case (n, ns, as) => handle_edgeStatement(n, ns, as) }
 
-  lazy val node_statement: Parser[T_NodeStatement] = node_id ~ attribute_list.? ^^ { case id ~ as => handle_nodeStatement(id, as) }
-  
-  lazy val node_id: Parser[T_NodeId] = id ~ port.? ^^ { case id ~ port => handle_nodeId(id, port) }
+  lazy val edge_rhs: P[Seq[(T_EdgeOp, T_Node)]] = ((edge_op ~ node) map { case (eo, n) => (eo, n) }).rep(1)
 
-  lazy val node: Parser[T_Node] = node_id | subgraph
-  
-  lazy val port: Parser[T_Port]
-  = (colon ~> id  ~ ( colon ~> compass_pt).? ^^ { case id ~ cp => handle_port(Some(id), cp) }) |
-    (colon ~> compass_pt ^^ { case cp => handle_port(None, Some(cp)) } )
-  
-  lazy val subgraph: Parser[T_Subgraph] = SUBGRAPH ~ id.? ~ l_bracket ~ statement_list ~ r_bracket ^^
-    { case _ ~ id ~ _ ~ ss ~ _ => handle_subgraph(id, ss) }
-  
-  lazy val assignment_statement: Parser[T_AssignmentStatement] = id ~ equ ~ id ^^
-    { case name ~ _ ~ value => handle_assignmentStatement(name, value) }
+  lazy val node_statement: P[T_NodeStatement] = node_id ~ attribute_list.? map { case (id, as) => handle_nodeStatement(id, as) }
 
-  def id: Parser[T_ID] // (identifier | numeral | quoted_string | html)
-  def statement_type: Parser[T_StatementType] // (GRAPH | NODE | EDGE)
-  def graph_type: Parser[T_GraphType] // (GRAPH | DIGRAPH)
-  def edge_op: Parser[T_EdgeOp] // (directed_edge | undirected_edge)
-  def compass_pt: Parser[T_CompassPt] // (n | ne | e | se | s | sw | w | nw | id)
+  lazy val node_id: P[T_NodeId] = id ~ port.? map { case (id, port) => handle_nodeId(id, port) }
+
+  lazy val node: P[T_Node] = P(node_id | subgraph)
+
+  lazy val port: P[T_Port] =
+    (colon ~ id  ~ ( colon ~ compass_pt).? map { case (id, cp) => handle_port(Some(id), cp) }) |
+    (colon ~ compass_pt map { case cp => handle_port(None, Some(cp)) } )
+
+  lazy val subgraph: P[T_Subgraph] = P(SUBGRAPH ~ id.? ~ l_bracket ~ statement_list ~ r_bracket) map
+    { case (id, ss) => handle_subgraph(id, ss) }
+
+  lazy val assignment_statement: P[T_AssignmentStatement] = P(id ~ equ ~ id) map
+    { case (name, value) => handle_assignmentStatement(name, value) }
+
+  def id: P[T_ID] // (identifier | numeral | quoted_string | html)
+  def statement_type: P[T_StatementType] // (GRAPH | NODE | EDGE)
+  def graph_type: P[T_GraphType] // (GRAPH | DIGRAPH)
+  def edge_op: P[T_EdgeOp] // (directed_edge | undirected_edge)
+  def compass_pt: P[T_CompassPt] // (n | ne | e | se | s | sw | w | nw | id)
 
   private def noneOnEmpty[T](ts: Seq[T]): Option[Seq[T]] = if(ts.isEmpty) None else Some(ts)
-
-  implicit def regex(rg: (Regex, Int)): Parser[String] = new Parser[String] {
-    def apply(in: Input) = {
-      val (r, g) = rg
-      val source = in.source
-      val offset = in.offset
-      val start = handleWhiteSpace(source, offset)
-      (r findPrefixMatchOf (source.subSequence(start, source.length))) match {
-        case Some(matched) =>
-          Success(matched.group(g),
-                  in.drop(start + matched.end - offset))
-        case None =>
-          val found = if (start == source.length()) "end of source" else "`"+source.charAt(start)+"'"
-          Failure("string matching regex `"+r+"' expected but "+found+" found", in.drop(start - offset))
-      }
-    }
-  }
 
 }

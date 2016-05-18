@@ -12,7 +12,8 @@ lazy val sharedSettings = Seq(
 )
 
 lazy val gvCore = crossProject.in(file("gv-core")).settings(sharedSettings :_*).settings(
-  name := "gv-core"
+  name := "gv-core",
+  libraryDependencies += "com.lihaoyi" %%% "fastparse" % "0.3.4"
 )
 
 lazy val gvCoreJs = gvCore.js

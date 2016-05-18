@@ -76,48 +76,50 @@ trait DotAstBuilder extends DotAstConstructors {
 
 object DotAstParser extends DotAstBuilder with DotParser {
 
-  lazy val id: Parser[ID]
-  = id_identifier | id_numeral | id_quoted_string
+  import fastparse.all._
+
+  lazy val id: P[ID]
+  = P(id_identifier | id_numeral | id_quoted_string)
 
 
-  lazy val id_identifier: Parser[ID.Identifier]
-  = identifier ^^ { x => ID.Identifier(x) }
+  lazy val id_identifier: P[ID.Identifier]
+  = identifier map { x => ID.Identifier(x) }
 
-  lazy val id_numeral: Parser[ID.Numeral]
-  = numeral ^^ { x => ID.Numeral(x.toDouble) }
+  lazy val id_numeral: P[ID.Numeral]
+  = numeral.! map { x => ID.Numeral(x.toDouble) }
 
-  lazy val id_quoted_string: Parser[ID.Quoted]
-  = dblquoted ^^ { x => ID.Quoted(x) }
+  lazy val id_quoted_string: P[ID.Quoted]
+  = dblquoted map { x => ID.Quoted(x) }
 
 
 
-  lazy val statement_type: Parser[StatementType]
-  = (GRAPH ^^^ StatementType.Graph) |
-    (NODE ^^^ StatementType.Node) |
-    (EDGE ^^^ StatementType.Edge)
+  lazy val statement_type: P[StatementType]
+  = (GRAPH map (_ => StatementType.Graph)) |
+    (NODE map (_ => StatementType.Node)) |
+    (EDGE map (_ => StatementType.Edge))
 
 
   lazy val graph_type: Parser[GraphType]
-  = (GRAPH ^^^ GraphType.Graph) |
-    (DIGRAPH ^^^ GraphType.Digraph)
+  = (GRAPH map (_ => GraphType.Graph)) |
+    (DIGRAPH map (_ => GraphType.Digraph))
 
 
   lazy val edge_op: Parser[EdgeOp]
-  = (directed_edge ^^^ EdgeOp.->) |
-    (undirected_edge ^^^ EdgeOp.--)
+  = (directed_edge map (_ => EdgeOp.->)) |
+    (undirected_edge map (_ => EdgeOp.--))
 
 
   lazy val compass_pt: Parser[T_CompassPt]
-  = (n  ^^^ CompassPt.N)  |
-    (ne ^^^ CompassPt.NE) |
-    (e  ^^^ CompassPt.E)  |
-    (se ^^^ CompassPt.SE) |
-    (s  ^^^ CompassPt.S)  |
-    (sw ^^^ CompassPt.SW) |
-    (w  ^^^ CompassPt.W)  |
-    (nw ^^^ CompassPt.NW) |
-    (c  ^^^ CompassPt.C)  |
-    (id ^^ CompassPt.or.apply)
+  = (n  map (_ => CompassPt.N))  |
+    (ne map (_ => CompassPt.NE)) |
+    (e  map (_ => CompassPt.E))  |
+    (se map (_ => CompassPt.SE)) |
+    (s  map (_ => CompassPt.S))  |
+    (sw map (_ => CompassPt.SW)) |
+    (w  map (_ => CompassPt.W))  |
+    (nw map (_ => CompassPt.NW)) |
+    (c  map (_ => CompassPt.C))  |
+    (id map CompassPt.or.apply)
 }
 
 class DotAstDestructors extends DotAst with DotDestructors {
