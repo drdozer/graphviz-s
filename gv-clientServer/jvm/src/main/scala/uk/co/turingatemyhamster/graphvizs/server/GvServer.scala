@@ -1,27 +1,29 @@
 package uk.co.turingatemyhamster.graphvizs.server
 
-import spray.http.{MediaTypes, MediaType, StatusCodes}
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.ActorSystem
-import spray.routing.SimpleRoutingApp
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.{MediaTypes, StatusCodes}
+import akka.stream.ActorMaterializer
 
-import scala.util.{Success, Failure}
-
+import scala.io.StdIn
 
 /**
  *
  *
  * @author Matthew Pocock
  */
-object GvServer extends App with SimpleRoutingApp {
+object GvServer {
 
-  implicit val system = ActorSystem("app-server")
+  def main(args: Array[String]): Unit = {
+    implicit val system = ActorSystem("app-server")
+    implicit val materializer = ActorMaterializer()
+    implicit val executionContext = system.dispatcher
 
-  val NotDot = """[^\.]*""".r
+    val NotDot = """[^\.]*""".r
 
-  startServer(interface = "localhost", port = 9100) {
-    path("graphviz" / NotDot ~ "." ~ NotDot) { (layout, format) =>
+    val route: Route = path("graphviz" / NotDot ~ "." ~ NotDot) { case (layout, format) =>
       post {
         entity(as[String]) { dotString =>
           import uk.co.turingatemyhamster.graphvizs._
@@ -36,23 +38,15 @@ object GvServer extends App with SimpleRoutingApp {
         }
       }
     } ~
-    path("graphviz" / "editor") {
       get {
-        respondWithMediaType(MediaTypes.`text/html`) {
-          complete {
-            Content.editor.render
-          }
-        }
+        getFromResourceDirectory("")
       }
-    } ~
-    get {
-      getFromResourceDirectory("")
-    }
-  }.onComplete {
-    case Success(b) =>
-      println(s"Successfully bound to ${b.localAddress}")
-    case Failure(ex) =>
-      println(ex.getMessage)
-      system.shutdown()
+
+    val port = 10080
+    val bindingsFuture = Http().bindAndHandle(route, "localhost", port)
+    println(s"Service deployed to http://localhost:$port/")
+    StdIn.readLine() // run until keypress
+    bindingsFuture.flatMap(_.unbind()).onComplete(_ => system.terminate())
   }
+
 }

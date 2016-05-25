@@ -1,5 +1,6 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
+import fastparse.Implicits.{Optioner, Sequencer}
 import fastparse.all
 
 /**
@@ -26,14 +27,22 @@ trait DotConstructors extends Dot {
   def handle_subgraph(id: Option[T_ID], statements: Seq[T_Statement]): T_Subgraph
 }
 
-/**
- * P for the DOT file format.
- *
- * @author Matthew Pocock
- */
-trait DotParser extends DotConstructors {
-
+object DotParser {
   import fastparse.all._
+
+  implicit class ExtraOps[T](val _p: P[T]) extends AnyVal {
+    def ~~[V, TU, TUV](_v: P[V])
+                      (implicit pu: Sequencer[T, Unit, TU], puv: Sequencer[TU, V, TUV]): Parser[TUV] =
+      (_p ~ whiteSpace ~ _v)
+    def ~?~[V, TU, TUV](_v: P[V])
+                       (implicit pu: Sequencer[T, Unit, TU], puv: Sequencer[TU, V, TUV]): Parser[TUV] =
+      (_p ~ whiteSpace_? ~ _v)
+    def ~?~/[V, TU, TUV](_v: P[V])
+                       (implicit pu: Sequencer[T, Unit, TU], puv: Sequencer[TU, V, TUV]): Parser[TUV] =
+      (_p ~/ whiteSpace_? ~ _v)
+    def ~?[UT, OT](implicit pu: Sequencer[Unit, T, UT], ot: Optioner[UT, OT]): Parser[OT] =
+      (whiteSpace_? ~ _p).?
+  }
 
   // symbol literals
   val l_bracket: P0 = "{"
@@ -46,8 +55,26 @@ trait DotParser extends DotConstructors {
   val period: P0 = "."
   val equ: P0 = "="
   val hash: P0 = "#"
-  val notNewline: P0 = !("\n")
   val dblQuote: P0 = "\""
+
+  lazy val whiteSpace: P0 = P((lineComment | spaces | newline).rep(1))
+  lazy val whiteSpace_? : P0 = whiteSpace.?
+  lazy val lineComment = P(hash ~/ (notNewline ~ AnyChar).rep ~ newline)
+  lazy val spaces = space.rep(1)
+  lazy val space = CharIn(" \t")
+  lazy val newline: P0 = ("\r\n" | "\r" | "\n")
+  lazy val notNewline: P0 = !newline
+
+}
+
+/**
+ * P for the DOT file format.
+ *
+ * @author Matthew Pocock
+ */
+trait DotParser extends DotConstructors {
+  import fastparse.all._
+  import DotParser._
 
   val directed_edge: P0 = "->"
   val undirected_edge: P0 = "--"
@@ -60,18 +87,11 @@ trait DotParser extends DotConstructors {
   val EDGE = IgnoreCase("edge")
   val SUBGRAPH = IgnoreCase("subgraph")
 
-  val whiteSpace: P0 = (spaces_? ~ lineComment ~ spaces).rep(1)
-  val spaces = space.rep(1)
-  val spaces_? = space.rep
-  val lineComment = hash ~ notNewline.rep
-  val space = CharIn(Array('\n', '\r', ' '))
-
-
   // identifier types
-  val digit: P0 = P(CharIn('0' to '9'))
-  val identifier: P[String] = P(CharIn('a' to 'Z', "_") ~  P(CharIn('a' to 'Z', "_", '0' to '9')).rep).!
-  val numeral: P[String] = P(CharIn("-+").? ~ ((period ~ digit.rep(1))) | (digit.rep(1) ~ (period ~ digit.rep).?)).!
-  val dblquoted: P[String] = P(dblQuote ~ (!dblQuote).rep.! ~ dblQuote)
+  lazy val digit: P0 = P(CharIn('0' to '9'))
+  lazy val identifier: P[String] = P(CharIn('a' to 'z', 'A' to 'Z', "_") ~  CharIn('a' to 'z', 'A' to 'Z', "_", '0' to '9').rep).!
+  lazy val numeral: P[String] = P(CharIn("-+").? ~ ((period ~ digit.rep(1)) | (digit.rep(1) ~ (period ~ digit.rep).?))).!
+  lazy val dblquoted: P[String] = P(dblQuote ~ (!dblQuote ~ AnyChar).rep.! ~ dblQuote)
 
   // compass points
   val n = IgnoreCase("n")
@@ -85,38 +105,55 @@ trait DotParser extends DotConstructors {
   val c = IgnoreCase("c")
 
   // productions
-  lazy val graph: P[T_Graph] = P(STRICT.!.? ~ graph_type ~ id.? ~ l_bracket ~ statement_list ~ r_bracket) map {
-    case (str, gt, id, stmts) => handle_graph(str.isDefined, gt, id, stmts)
+  lazy val graphFile: P[T_Graph] = P(graph ~ whiteSpace_? ~ End)
+
+  lazy val graph: P[T_Graph] = P(
+    STRICT.!.~?.~/ ~?~
+      graph_type ~/
+      graphDeclaration) map {
+    case (str, gt, (id, stmts)) => handle_graph(str.isDefined, gt, id, stmts)
   }
 
-  lazy val statement_list: P[Seq[T_Statement]] = P((statement ~ semi_colon.?).rep)
+  lazy val subgraph: P[T_Subgraph] = P(SUBGRAPH ~/ graphDeclaration) map
+    { case (id, ss) => handle_subgraph(id, ss) }
 
-  lazy val statement: P[T_Statement]
-  = assignment_statement |
-    attribute_statement |
-    subgraph |
-    edge_statement |
-    node_statement
+  lazy val graphDeclaration: P[(Option[T_ID], Seq[T_Statement])] = P(
+    id.~? ~?~
+      l_bracket ~/
+      statement_list ~?~
+      r_bracket)
 
-  lazy val attribute_statement: P[T_AttributeStatement] = P(statement_type ~ attribute_list) map {
+//  lazy val statement_list: P[Seq[T_Statement]] = P((statement ~ whiteSpace_? ~ semi_colon.?).rep(sep = whiteSpace_?))
+  lazy val statement_list: P[Seq[T_Statement]] = P(statement.rep)
+
+  lazy val statement: P[T_Statement] = P(
+    whiteSpace_? ~
+    (assignment_statement |
+      attribute_statement |
+      subgraph |
+      edge_statement |
+      node_statement) ~ semi_colon.~?)
+
+
+  lazy val attribute_statement: P[T_AttributeStatement] = P(statement_type ~?~ attribute_list) map {
     case (st, al) => handle_attributeStatement(st, al)
   }
 
-  lazy val attribute_list: P[T_AttributeList] = P(l_box ~ attributes ~ r_box ~ attribute_list.?) map {
+  lazy val attribute_list: P[T_AttributeList] = P(l_box ~?~ attributes ~?~ r_box ~?~ attribute_list.?) map {
     case (al1, nxt) => handle_attributeList(al1, nxt) }
 
-  lazy val attributes: P[Seq[T_AttributeAssignment]] = attribute_assignment.rep(sep = comma)
+  lazy val attributes: P[Seq[T_AttributeAssignment]] = attribute_assignment.rep(sep = whiteSpace_? ~ comma ~ whiteSpace_?)
 
-  lazy val attribute_assignment: P[T_AttributeAssignment] = id ~ (equ ~ id).? map {
+  lazy val attribute_assignment: P[T_AttributeAssignment] = id ~ (equ ~?~ id).~? map {
     case (name, value) => handle_attributeAssignment(name, value)
   }
 
-  lazy val edge_statement: P[T_EdgeStatement] = node ~ edge_rhs ~ attribute_list.? map
+  lazy val edge_statement: P[T_EdgeStatement] = (node ~ edge_rhs ~ attribute_list.~?) map
     { case (n, ns, as) => handle_edgeStatement(n, ns, as) }
 
-  lazy val edge_rhs: P[Seq[(T_EdgeOp, T_Node)]] = ((edge_op ~ node) map { case (eo, n) => (eo, n) }).rep(1)
+  lazy val edge_rhs: P[Seq[(T_EdgeOp, T_Node)]] = ((whiteSpace_? ~ edge_op ~?~ node) map { case (eo, n) => (eo, n) }).rep(1)
 
-  lazy val node_statement: P[T_NodeStatement] = node_id ~ attribute_list.? map { case (id, as) => handle_nodeStatement(id, as) }
+  lazy val node_statement: P[T_NodeStatement] = (node_id ~?~ attribute_list.?) map { case (id, as) => handle_nodeStatement(id, as) }
 
   lazy val node_id: P[T_NodeId] = id ~ port.? map { case (id, port) => handle_nodeId(id, port) }
 
@@ -126,10 +163,7 @@ trait DotParser extends DotConstructors {
     (colon ~ id  ~ ( colon ~ compass_pt).? map { case (id, cp) => handle_port(Some(id), cp) }) |
     (colon ~ compass_pt map { case cp => handle_port(None, Some(cp)) } )
 
-  lazy val subgraph: P[T_Subgraph] = P(SUBGRAPH ~ id.? ~ l_bracket ~ statement_list ~ r_bracket) map
-    { case (id, ss) => handle_subgraph(id, ss) }
-
-  lazy val assignment_statement: P[T_AssignmentStatement] = P(id ~ equ ~ id) map
+  lazy val assignment_statement: P[T_AssignmentStatement] = P(id ~?~ equ ~?~ id) map
     { case (name, value) => handle_assignmentStatement(name, value) }
 
   def id: P[T_ID] // (identifier | numeral | quoted_string | html)

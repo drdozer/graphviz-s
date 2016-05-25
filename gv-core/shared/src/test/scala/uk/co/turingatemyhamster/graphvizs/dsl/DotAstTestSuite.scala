@@ -1,7 +1,10 @@
 package uk.co.turingatemyhamster.graphvizs
 package dsl
 
+import fastparse.core.{Parsed, Parser}
 import utest._
+
+import ParseTestUtil._
 
 /**
  *
@@ -9,6 +12,7 @@ import utest._
  * @author Matthew Pocock
  */
 object DotAstTestSuite extends TestSuite {
+
   val tests = TestSuite {
     "implicit ast conversions" - {
 
@@ -53,55 +57,47 @@ object DotAstTestSuite extends TestSuite {
     "identifier parser" - {
 
       "parse letter-only identifiers" - {
-        val res = DotAstParser.parseAll(DotAstParser.id, "abcd")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.id_identifier, "abcd")
         "parse to the expected value" -
-          assert(res.get == (ID.Identifier("abcd") : ID))
+          assert(res == (ID.Identifier("abcd") : ID))
+      }
+
+      "parse letter-only identifiers" - {
+        val res = parseMustSucced(DotAstParser.id, "abcd")
+        "parse to the expected value" -
+          assert(res == (ID.Identifier("abcd") : ID))
       }
 
       "parse alphanumerics starting with a letter" - {
-        val res = DotAstParser.parseAll(DotAstParser.id, "ab786876")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.id, "ab786876")
         "parse to the expected value" -
-          assert(res.get == (ID.Identifier("ab786876") : ID))
+          assert(res == (ID.Identifier("ab786876") : ID))
       }
 
       "parse numeric negative double" - {
-        val res = DotAstParser.parseAll(DotAstParser.id, "-1234.3453")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.id, "-1234.3453")
         "parse to the expected value" -
-          assert(res.get == (ID.Numeral(-1234.3453) : ID))
+          assert(res == (ID.Numeral(-1234.3453) : ID))
       }
 
       "parse numeric for 1" - {
-        val res = DotAstParser.parseAll(DotAstParser.id, "1")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.id, "1")
         "parse to the expected value" -
-          assert(res.get == (ID.Numeral(1.0) : ID))
+          assert(res == (ID.Numeral(1.0) : ID))
       }
 
       "be unable to parse numeric for 1 with the id_identifier parser" - {
-        val res = DotAstParser.parseAll(DotAstParser.id_identifier, "1")
-        "parse unsuccessfully" -
-          assert(!res.successful)
+        val res = parseMustFail(DotAstParser.id_identifier, "1")
       }
 
       "parse numeric for 1 with the id_numeral parser" - {
-        val res = DotAstParser.parseAll(DotAstParser.id_numeral , "1")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.id_numeral , "1")
         "parse to the expected value" -
-          assert(res.get == (ID.Numeral(1.0) : ID))
+          assert(res == (ID.Numeral(1.0) : ID))
       }
 
       "be unable to parse numeric for 1 with the id_quoted_string parser" - {
-        val res = DotAstParser.parseAll(DotAstParser.id_quoted_string , "1")
-        "parse unsuccessfully" -
-          assert(!res.successful)
+        val res = parseMustFail(DotAstParser.id_quoted_string , "1")
       }
 
     }
@@ -109,27 +105,27 @@ object DotAstTestSuite extends TestSuite {
     "attribute assignment parser" - {
 
       "parse attribute with name only" - {
-        val res = DotAstParser.parseAll(DotAstParser.attribute_assignment , "a")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.attribute_assignment , "a")
         "parse to the expected value" -
-          assert(res.get == AttributeAssignment("a", None))
+          assert(res == AttributeAssignment("a", None))
+      }
+
+      "parse attribute with name and identifier value without spaces" - {
+        val res = parseMustSucced(DotAstParser.attribute_assignment , "a=b")
+        "parse to the expected value" -
+          assert(res == AttributeAssignment("a", "b"))
       }
 
       "parse attribute with name and identifier value" - {
-        val res = DotAstParser.parseAll(DotAstParser.attribute_assignment , "a = b")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.attribute_assignment , "a = b")
         "parse to the expected value" -
-          assert(res.get == AttributeAssignment("a", "b"))
+          assert(res == AttributeAssignment("a", "b"))
       }
 
       "parse attribute with name and numeric value" - {
-        val res = DotAstParser.parseAll(DotAstParser.attribute_assignment , "a = 1")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.attribute_assignment , "a = 1")
         "parse to the expected value" -
-          assert(res.get == AttributeAssignment("a", 1))
+          assert(res == AttributeAssignment("a", 1))
       }
 
     }
@@ -137,49 +133,37 @@ object DotAstTestSuite extends TestSuite {
     "individual statement parser" - {
 
       "parse a node statement with no attributes" - {
-        val res = DotAstParser.parseAll(DotAstParser.node_statement, "n1")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.node_statement, "n1")
         "parse to the expected value" -
-          assert(res.get == NodeStatement("n1", None))
+          assert(res == NodeStatement("n1", None))
       }
 
       "parse a node statement with one numeric attribute" - {
-        val res = DotAstParser.parseAll(DotAstParser.node_statement, "n1 [a = 3]")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.node_statement, "n1 [a = 3]")
         "parse to the expected value" -
-          assert(res.get == NodeStatement("n1", Some(AttributeList(Seq("a" := 3)))))
+          assert(res == NodeStatement("n1", Some(AttributeList(Seq("a" := 3)))))
       }
 
       "parse a directed edge statement with no attributes" - {
-        val res = DotAstParser.parseAll(DotAstParser.edge_statement, "a -> b -> c")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.edge_statement, "a -> b -> c")
         "parse to the expected value" -
-          assert(res.get == EdgeStatement("a", Seq(EdgeOp.-> -> "b", EdgeOp.-> -> "c"), None))
+          assert(res == EdgeStatement("a", Seq(EdgeOp.-> -> "b", EdgeOp.-> -> "c"), None))
       }
 
       "fail to parse a node as an edge" - {
-        val res = DotAstParser.parseAll(DotAstParser.edge_statement, "n1")
-        "parse unsuccessfully" -
-          assert(!res.successful)
+        val res = parseMustFail(DotAstParser.edge_statement, "n1")
       }
 
       "parse an attribute statement" - {
-        val res = DotAstParser.parseAll(DotAstParser.attribute_statement, "graph [color = red]")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.attribute_statement, "graph [color = red]")
         "parse to the expected value" -
-          assert(res.get == AttributeStatement(StatementType.Graph, AttributeList(Seq("color" := "red"))))
+          assert(res == AttributeStatement(StatementType.Graph, AttributeList(Seq("color" := "red"))))
       }
 
       "parse an assignment statement" - {
-        val res = DotAstParser.parseAll(DotAstParser.assignment_statement, "color = red")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.assignment_statement, "color = red")
         "parse to the expected value" -
-          assert(res.get == AssignmentStatement("color", "red"))
+          assert(res == AssignmentStatement("color", "red"))
       }
 
     }
@@ -187,43 +171,51 @@ object DotAstTestSuite extends TestSuite {
     "statement_list parser" - {
 
       "parse the empty string" - {
-        val res = DotAstParser.parseAll(DotAstParser.statement_list, "")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.statement_list, "")
         "parse to the expected value" -
-          assert(res.get == Seq[Statement]())
+          assert(res == Seq[Statement]())
       }
 
       "parse one node statement" - {
-        val res = DotAstParser.parseAll(DotAstParser.statement_list, "n1")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.statement_list, "n1")
         "parse to the expected value" -
-          assert(res.get == Seq(NodeStatement("n1", None) : Statement))
+          assert(res == Seq(NodeStatement("n1", None) : Statement))
       }
 
       "parse one assignment statement" - {
-        val res = DotAstParser.parseAll(DotAstParser.statement_list, "a = b")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.statement_list, "a = b")
         "parse to the expected value" -
-          assert(res.get == Seq(AssignmentStatement("a", "b") : Statement))
+          assert(res == Seq(AssignmentStatement("a", "b") : Statement))
       }
 
       "parse one assignment statement with a trailing semi-colon" - {
-        val res = DotAstParser.parseAll(DotAstParser.statement_list, "a = b;")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.statement_list, "a = b;")
         "parse to the expected value" -
-          assert(res.get == Seq(AssignmentStatement("a", "b") : Statement))
+          assert(res == Seq(AssignmentStatement("a", "b") : Statement))
       }
 
-      "parse two assignment statements" - {
-        val res = DotAstParser.parseAll(DotAstParser.statement_list, "a = b ; c = d")
-        "parse successfully" -
-          assert(res.successful)
+      "parse two assignment statements - |;|" - {
+        val res = parseMustSucced(DotAstParser.statement_list, "a = b;c = d")
         "parse to the expected value" -
-          assert(res.get == Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d")))
+          assert(res == Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d")))
+      }
+
+      "parse two assignment statements - | ;|" - {
+        val res = parseMustSucced(DotAstParser.statement_list, "a = b ;c = d")
+        "parse to the expected value" -
+          assert(res == Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d")))
+      }
+
+      "parse two assignment statements - |; |" - {
+        val res = parseMustSucced(DotAstParser.statement_list, "a = b; c = d")
+        "parse to the expected value" -
+          assert(res == Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d")))
+      }
+
+      "parse two assignment statements - | ; |" - {
+        val res = parseMustSucced(DotAstParser.statement_list, "a = b ; c = d")
+        "parse to the expected value" -
+          assert(res == Seq(AssignmentStatement("a", "b") : Statement, AssignmentStatement("c", "d")))
       }
     }
 
@@ -231,35 +223,33 @@ object DotAstTestSuite extends TestSuite {
     "subgraph parser" - {
 
       "parse an empty subgraph" - {
-        val res = DotAstParser.parseAll(DotAstParser.subgraph, "subgraph {}")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.subgraph, "subgraph {}")
         "parse to the expected value" -
-          assert(res.get == Subgraph(None, Seq()))
+          assert(res == Subgraph(None, Seq()))
+      }
+
+      "parse a named empty subgraph with space in body" - {
+        val res = parseMustSucced(DotAstParser.subgraph, "subgraph g { }")
+        "parse to the expected value" -
+          assert(res == Subgraph("g"))
       }
 
       "parse a named empty subgraph" - {
-        val res = DotAstParser.parseAll(DotAstParser.subgraph, "subgraph g {}")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.subgraph, "subgraph g {}")
         "parse to the expected value" -
-          assert(res.get == Subgraph("g"))
+          assert(res == Subgraph("g"))
       }
 
       "parse a subgraph with one node" - {
-        val res = DotAstParser.parseAll(DotAstParser.subgraph, "subgraph { a = b }")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.subgraph, "subgraph { a = b }")
         "parse to the expected value" -
-          assert(res.get == Subgraph(AssignmentStatement("a", "b")))
+          assert(res == Subgraph(AssignmentStatement("a", "b")))
       }
 
       "parse a subgraph with two nodes" - {
-        val res = DotAstParser.parseAll(DotAstParser.subgraph, "subgraph { a = b; c = d }")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.subgraph, "subgraph { a = b; c = d }")
         "parse to the expected value" -
-          assert(res.get == Subgraph(AssignmentStatement("a", "b"), AssignmentStatement("c", "d")))
+          assert(res == Subgraph(AssignmentStatement("a", "b"), AssignmentStatement("c", "d")))
       }
     }
 
@@ -267,11 +257,19 @@ object DotAstTestSuite extends TestSuite {
     "graph parser" - {
 
       "parse an empty graph" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """graph {}""")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.graph, """graph {}""")
         "parse to the expected value" -
-          assert(res.get == Graph(
+          assert(res == Graph(
+            strict = false,
+            graphType = GraphType.Graph,
+            id = None,
+            statements = Seq()))
+      }
+
+      "parse an empty graph with leading whitespace" - {
+        val res = parseMustSucced(DotAstParser.graph, """ graph {}""")
+        "parse to the expected value" -
+          assert(res == Graph(
             strict = false,
             graphType = GraphType.Graph,
             id = None,
@@ -279,11 +277,9 @@ object DotAstTestSuite extends TestSuite {
       }
 
       "parse an empty named graph" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """graph g {}""")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.graph, """graph g {}""")
         "parse to the expected value" -
-          assert(res.get == Graph(
+          assert(res == Graph(
             strict = false,
             graphType = GraphType.Graph,
             id = Some(ID("g")),
@@ -291,11 +287,9 @@ object DotAstTestSuite extends TestSuite {
       }
 
       "parse an empty digraph" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """digraph {}""")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.graph, """digraph {}""")
         "parse to the expected value" -
-          assert(res.get == Graph(
+          assert(res == Graph(
             strict = false,
             graphType = GraphType.Digraph,
             id = None,
@@ -303,11 +297,9 @@ object DotAstTestSuite extends TestSuite {
       }
 
       "parse an empty named digraph" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """digraph g {}""")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.graph, """digraph g {}""")
         "parse to the expected value" -
-          assert(res.get == Graph(
+          assert(res == Graph(
             strict = false,
             graphType = GraphType.Digraph,
             id = Some(ID("g")),
@@ -315,11 +307,9 @@ object DotAstTestSuite extends TestSuite {
       }
 
       "parse a strict, empty graph" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """strict graph {}""")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.graph, """strict graph {}""")
         "parse to the expected value" -
-          assert(res.get == Graph(
+          assert(res == Graph(
             strict = true,
             graphType = GraphType.Graph,
             id = None,
@@ -327,29 +317,25 @@ object DotAstTestSuite extends TestSuite {
       }
 
       "parse a named, strict, empty graph" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """strict graph G {}""")
-        "parse successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(DotAstParser.graph, """strict graph G {}""")
         "parse to the expected value" -
-          assert(res.get == Graph(strict = true, GraphType.Graph, Some("G"), Seq()))
+          assert(res == Graph(strict = true, GraphType.Graph, Some("G"), Seq()))
       }
 
       "parse a named digraph with one edge" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph, """
+        val res = parseMustSucced(DotAstParser.graph, """
                         digraph G {
                         	start -> a0;
                         }""")
-        "parse successfully" -
-          assert(res.successful)
         "parse to the expected value" -
-          assert(res.get == Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start") --> "a0")))
+          assert(res == Graph(false, GraphType.Digraph, Some("G"), Seq(EdgeStatement("start") --> "a0")))
       }
     }
 
     "parse example graphs" - {
 
       "parse the trimmed hello world example" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph,
+        val res = parseMustSucced(DotAstParser.graph,
           """
             |
             | digraph g {
@@ -357,12 +343,10 @@ object DotAstTestSuite extends TestSuite {
             | }
             |
           """.stripMargin.trim)
-        "parse successfully" -
-          assert(res.successful)
       }
 
       "parse the cluster example" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph,
+        val res = parseMustSucced(DotAstParser.graph,
           """
             |digraph G {
             |
@@ -392,12 +376,10 @@ object DotAstTestSuite extends TestSuite {
             |        	end [shape=Msquare];
             |        }
           """.stripMargin.trim)
-        "parse successfully" -
-          assert(res.successful)
       }
 
       "parse the genetic programming example" - {
-        val res = DotAstParser.parseAll(DotAstParser.graph,
+        val res = parseMustSucced(DotAstParser.graph,
           """
             |##"This is an example from a real-world application, where we were using Genetic Programming to do simple symbolic regression. We needed a good way to visualize the trees that were being created, and it didn't take long to code up some lisp to create a dot file that visualized multiple individuals. The next step was to provide color-coding of key nodes so that we could illustrate crossover and mutation of individuals before-and-after-style. This is a sample dot file from some early debugging." Contributed by Wayne Folta.
             |
@@ -526,8 +508,6 @@ object DotAstTestSuite extends TestSuite {
             |   }
             |
           """.stripMargin.trim)
-        "parse successfully" -
-          assert(res.successful)
       }
     }
   }

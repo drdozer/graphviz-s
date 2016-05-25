@@ -21,3 +21,9 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-pgp" % "0.8.3")
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.6")
 
 addSbtPlugin("org.xerial.sbt" % "sbt-pack" % "0.7.9")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.0")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.0-RC1")
+
+addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.4.0")

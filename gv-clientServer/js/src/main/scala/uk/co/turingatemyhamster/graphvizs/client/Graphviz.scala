@@ -3,141 +3,88 @@ package client
 
 import uk.co.turingatemyhamster.graphvizs.dsl._
 import exec._
-
-import org.scalajs.dom.extensions.Ajax
-
-import org.scalajs.dom.{HTMLSpanElement, HTMLSelectElement, HTMLIFrameElement, HTMLTextAreaElement}
-import rx._
-import rx.ops._
-
-import scala.concurrent.duration._
-import scala.scalajs.js.Dynamic
-import scala.scalajs.js.annotation.JSExport
-import scala.util.{Failure, Success}
-import scalatags.ext.Framework._
-import scalatags.JsDom.all.{width => _, height => _, _}
+import org.widok._
+import org.widok.bindings.HTML
+import org.widok.html._
+import pl.metastack.metarx.{Buffer, ReadChannel, Var}
 
 /**
  *
  *
  * @author Matthew Pocock
  */
-@JSExport
-object Graphviz {
+object Graphviz extends PageApplication {
+  implicit val ec = scala.scalajs.concurrent.JSExecutionContext.queue
 
-  @JSExport
-  def wire(dotTextArea: HTMLTextAreaElement,
-           layouts: HTMLSelectElement,
-           status: HTMLSpanElement,
-           dotSvg: HTMLIFrameElement,
-           renderedDot: HTMLTextAreaElement): Unit =
-  {
-    implicit val scheduler = new DomScheduler
-    import scala.scalajs.concurrent.JSExecutionContext.Implicits.runNow
+  val defaultText =
+            """
+              |digraph {
+              |  "hello" -> "world"
+              |}
+            """.stripMargin.trim
 
-    // prime the pumps
-    dotTextArea.value match {
-      case v if v.isEmpty =>
-        dotTextArea.value =
-          """
-            |digraph {
-            |  "hello" -> "world"
-            |}
-          """.stripMargin.trim
-    }
+  val layouts = Buffer(DotLayout.allLayouts :_*)
+  val layout = Var(Some(DotLayout.dot) : Option[DotLayout])
+  val gvUrl = layout.filter(_.isDefined) map { l => s"/graphviz/${l.get.name}.svg" }
+  val dotText = Var(defaultText)
+  val svgText = Var("")
+  private val dotTextDistinct = dotText.distinct
+  val parsed = dotTextDistinct map { txt =>
+    (txt, DotAstParser.graphFile.parse(txt))
+  }
+  val status = parsed map {
+    case (_, fastparse.all.Parsed.Success(_, _)) => "success"
+    case (_, f : fastparse.all.Parsed.Failure) => f.msg
+  }
+  val parseStatus = parsed map {
+    case (t, fastparse.all.Parsed.Success(_, _)) => (t, true)
+    case (t, fastparse.all.Parsed.Failure(_, _, _)) => (t, false)
+  }
+  val parseStatusBool = parseStatus map (_._2)
 
-    layouts.modifyWith(
-      DotLayout.allLayouts map (l => option(value := l.name, l.name)) : _*
-    ).render
-
-    layouts.value = "dot"
-
-    val rxDTA = ReactiveTextArea(dotTextArea)
-
-    val gvTextDebursted = rxDTA.value.debounce(1 seconds)
-
-    Obs(gvTextDebursted) {
-      println("gvTextDebursted")
-    }
-
-    val gvParsed = Rx {
-      DotAstParser.parseAll(DotAstParser.graph, gvTextDebursted().trim)
-    }
-
-    Obs(gvParsed) {
-      println(s"gvParsed")
-    }
-
-    val gvValid = gvParsed.map {
-      case DotAstParser.NoSuccess(_, _) => None
-      case DotAstParser.Success(res, _) => Some(res)
-    }
-
-    Obs(gvValid) {
-      println(s"gvValid: ${gvValid()}")
-    }
-
-    val gvInvalid = gvParsed.map {
-      case DotAstParser.NoSuccess(msg, next) => Some(msg, next.pos)
-      case DotAstParser.Success(_, _) => None
-    }
-
-    Obs(gvInvalid) {
-      println(s"gvInvalid: ${gvInvalid()}")
-    }
-
-    val rxLayout = ReactiveSelect(layouts).value.map(Some apply _ filterNot (_.isEmpty))
-
-    Obs(rxLayout) {
-      println(s"rxLayout: ${rxLayout()}")
-    }
-
-    val gvParsedLayout = Rx {
-      for {
-        p <- gvValid()
-        l <- rxLayout()
-      } yield (p, l)
-    }
-
-    Obs(gvParsedLayout) {
-      println(s"gvParsedLayout: ${gvParsedLayout()}")
-    }
-
-    val busy = Var(false)
-
-    Obs(gvParsedLayout) {
-      for {
-        _ <- gvParsedLayout()
-        text = gvTextDebursted()
-        lo <- rxLayout()
-      } {
-        println(s"Triggering gv call with ${gvParsedLayout()}")
-        busy() = true
-        Ajax.post(s"/graphviz/${lo}.svg", text) onComplete  {
-          case Success(req) =>
-            println("Got response")
-            renderedDot.value = req.responseText
-            dotSvg.src = "data:image/svg+xml;charset=utf-8," + Dynamic.global.escape(req.responseText)
-            busy() = false
-          case Failure(t) =>
-            println("Failed to process")
-            busy() = false
-        }
-      }
-    }
-
-    var statusText = Rx {
-      val vi =
-        if(gvValid().isDefined) "valid"
-        else if(gvInvalid().isDefined) "invalid"
-        else ""
-      val bsy =
-        if(busy()) " (working)"
-        else ""
-      s"$vi$bsy"
-    }
-
-    status.modifyWith(statusText).render
+  gvUrl zip parseStatus filter {
+    case(_, (_, s)) => s
+  } attach {
+    case(url, (txt, _)) =>
+      val req = HTTP.post(url, txt)
+      println(s"req: url: $url")
+      println(s"req: txt: $txt")
+      req.onSuccess { case t => svgText := t }
+      req.onFailure { case t => println(t) }
   }
 
+  dotText.attach(t => println(s"dotText: $t"))
+  dotTextDistinct.attach(t => println(s"dotTextDistinct: $t"))
+  layout.attach(l => println(s"layout: $l"))
+  gvUrl.attach(u => println(s"gvUrl: $u"))
+  parsed.attach(p => println(s"parsed: $p"))
+  status.attach(s => println(s"status: $s"))
+  parseStatus.attach(s => println(s"parseStatus: $s"))
+
+  def view() = div(
+    h1("Graphviz interactive editor"),
+    textarea()
+      .css("dotEditor")
+      .rows(20)
+      .cols(60)
+      .bind(dotText),
+    div(status)
+      .css("status")
+      .cssState(parseStatusBool, "pass")
+      .cssState(!parseStatusBool, "fail"),
+    select()
+      .css("dotLayout")
+      .bind(layouts, (l: DotLayout) => HTML.Input.Select.Option(l.name), layout),
+    raw("")
+      .css("svgArea")
+      .bind(svgText),
+    textarea()
+      .css("svgText")
+      .enabled(false)
+      .rows(20)
+      .cols(60)
+      .bind(svgText)
+  )
+
+  override def ready(): Unit = {}
 }

@@ -1,6 +1,7 @@
 package uk.co.turingatemyhamster.graphvizs.dsl
 
 import utest._
+import ParseTestUtil._
 
 /**
  *
@@ -40,18 +41,14 @@ object ArrowTypeTestSuite extends TestSuite {
 
     "arrow type strings" - {
       "parse arrow name with one arrow type" - {
-        val res = ArrowTypeParsers.parseAll(ArrowTypeParsers.arrowType, "box")
-        "parses successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(ArrowTypeParsers.arrowType, "box")
         "parses to the expected value" -
-          assert(res.get == ArrowType(Shape.Box :: Nil))
+          assert(res == ArrowType(Shape.Box :: Nil))
       }
       "parse arrow name with two arrow types" - {
-        val res = ArrowTypeParsers.parseAll(ArrowTypeParsers.arrowType, "boxoldot")
-        "parses successfully" -
-          assert(res.successful)
+        val res = parseMustSucced(ArrowTypeParsers.arrowType, "boxoldot")
         "parses to the expected value" -
-          assert(res.get == ArrowType(Shape.Box :: ArrowName(Modifiers(O, L), Shape.Dot) :: Nil))
+          assert(res == ArrowType(Shape.Box :: ArrowName(Modifiers(O, L), Shape.Dot) :: Nil))
 
 //        ArrowTypeParsers parsesAllOf
 //          "boxoldot" using
