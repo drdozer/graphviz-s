@@ -1,8 +1,7 @@
-[![Build Status](https://travis-ci.org/drdozer/graphviz-s.svg?branch=master)](https://travis-ci.org/drdozer/graphviz-s)
-
 #GRAPHVIZ bindings from scala.
 
 [![Join the chat at https://gitter.im/drdozer/graphviz-s](https://badges.gitter.im/drdozer/graphviz-s.svg)](https://gitter.im/drdozer/graphviz-s?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/drdozer/graphviz-s.svg?branch=master)](https://travis-ci.org/drdozer/graphviz-s)
 
 This projects has two modules: core and clientServer. Core provides an API to parse and emit graphviz files, and also
 to execute dot. ClientServer provides a scala.js/spray.io client-server environment for exposing the dot binary
