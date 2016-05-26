@@ -70,4 +70,4 @@ Then run using docker:
 $docker run -d  -p 127.0.0.1:10080:10080 uk.co.turingatemyhamster/gv-clientserver
 ```
 
-Then open up [http://localhost:10080/index.html] and enjoy an entirely dockerised dot editing experience.
+Then open up <http://localhost:10080/index.html> and enjoy an entirely dockerised dot editing experience.
