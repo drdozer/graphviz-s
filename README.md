@@ -16,7 +16,7 @@ resolvers += "bintray-drdozer" at "http://dl.bintray.com/content/drdozer/maven"
 ```
 and the dependency to your `libraryDependencies`:
 ```scala
-libraryDependencies += "uk.co.turingatemyhamster" %% "gv-core" % "0.3.2"
+libraryDependencies += "uk.co.turingatemyhamster" %% "gv-core" % "0.4.1"
 ```
 
 ```scala
@@ -67,7 +67,7 @@ $sbt
 
 Then run using docker:
 ```
-docker run -d  -p 127.0.0.1:10080:10080 uk.co.turingatemyhamster/gv-clientserver
+$docker run -d  -p 127.0.0.1:10080:10080 uk.co.turingatemyhamster/gv-clientserver
 ```
 
-Then open up http://localhost:10080/index.html and enjoy an entirely dockerised dot editing experience.
+Then open up [http://localhost:10080/index.html] and enjoy an entirely dockerised dot editing experience.
