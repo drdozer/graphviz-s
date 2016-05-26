@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/drdozer/graphviz-s.svg?branch=master)](https://travis-ci.org/drdozer/graphviz-s)
+
 #GRAPHVIZ bindings from scala.
 
 This projects has two modules: core and clientServer. Core provides an API to parse and emit graphviz files, and also
