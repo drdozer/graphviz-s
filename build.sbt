@@ -7,7 +7,7 @@ lazy val sharedSettings = Seq(
   organization := "uk.co.turingatemyhamster",
   scalaVersion := "2.11.7",
   scalacOptions ++= Seq("-deprecation", "-unchecked"),
-  version := "0.4.1-SNAPSHOT",
+  version := "0.4.1",
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 )
 
