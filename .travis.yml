@@ -2,7 +2,7 @@ language: scala
 scala:
 - 2.11.4
 jdk:
-- oraclejdk7
+- oraclejdk8
 env:
   global:
   - secure: H4FjGg2AcW8Qzus2FLHija+H9yxFxX3+ZtgKeqJcobdnXAE5nt8hzZxSaQbyPVILbknAHb9o/WbvHS/E+1xWinNHjjtWszhkQ8PoH96nMN5rXQic/4aeGoeLLd+dqstzQnhVcFGxSCV/4jTvkAYwbPhqIT0KsImxGR5ZuTJFWi8=
