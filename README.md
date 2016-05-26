@@ -55,3 +55,19 @@ The server exposes the following endpoints:
 
 Post to this to receive back the output of dot. For example, `/graphviz/dot.dot` will invoke dot with the dot layout and
 return the result as dot text while `/graphviz/neato.svg` will invoke dot with the neato layout and svg output.
+
+## dockerised service
+
+Firstly build the dockerised web service:
+```
+$sbt
+>project gvClientServerJVM
+>docker
+```
+
+Then run using docker:
+```
+docker run -d  -p 127.0.0.1:10080:10080 uk.co.turingatemyhamster/gv-clientserver
+```
+
+Then open up http://localhost:10080/index.html and enjoy an entirely dockerised dot editing experience.
