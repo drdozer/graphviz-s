@@ -61,6 +61,7 @@ lazy val gvClientServerJvm = gvClientServer.jvm
 
     new Dockerfile {
       from("java:8-jre")
+      runRaw("""apt-get update && apt-get install -y graphviz""")
       entryPoint(s"$targetDir/bin/${executableScriptName.value}")
       copy(appDir, targetDir)
       expose(10080)

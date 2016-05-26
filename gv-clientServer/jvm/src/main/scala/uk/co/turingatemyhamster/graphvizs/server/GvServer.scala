@@ -43,10 +43,20 @@ object GvServer {
       }
 
     val port = 10080
-    val bindingsFuture = Http().bindAndHandle(route, "localhost", port)
+    val bindingsFuture = Http().bindAndHandle(route, "0.0.0.0", port)
     println(s"Service deployed to http://localhost:$port/")
-    StdIn.readLine() // run until keypress
-    bindingsFuture.flatMap(_.unbind()).onComplete(_ => system.terminate())
+
+//    Runtime.getRuntime.
+//    println("exiting")
+//    bindingsFuture.flatMap { b =>
+//      println("unbinding")
+//      b.unbind()
+//    } onComplete {
+//      _ =>
+//        println("terminating")
+//        system.terminate()
+//        println("terminated")
+//    }
   }
 
 }
