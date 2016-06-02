@@ -4,6 +4,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.Scope
 
 import uk.co.turingatemyhamster.graphvizs.exec._
+import java.io.File
 
 
 /**
@@ -62,6 +63,13 @@ class ExecSpec extends Specification {
 //    val annotated = gOut.statements.collect { case es@EdgeStatement(_, _, Some(_)) => es }
 //    ! annotated.isEmpty
 //  }
+
+  "allow dot location to be overriden" in {
+    val path = new File("/usr/local/bin/doc")
+    val customExec = Exec(path)
+    import customExec._
+    dotBinary ==== path
+  }
 
 //  "run DOT on graph input and generate SVG XML output" in {
 //    val svgOut = dot2dot[Graph, String](StrictDigraph("g",
