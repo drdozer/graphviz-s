@@ -116,7 +116,7 @@ trait GraphHandlers {
     var value: Graph = null
 
     def handle(out: InputStream) {
-      value = dsl.parseAsGraph(Source.fromInputStream(out).mkString)
+      value = dsl.parseAsGraph(Source.fromInputStream(out).mkString.trim())
       out.close()
     }
   }
