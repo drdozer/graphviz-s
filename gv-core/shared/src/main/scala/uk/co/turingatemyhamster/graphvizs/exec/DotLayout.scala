@@ -14,8 +14,9 @@ object DotLayout {
   val circo = DotLayout("circo")
   val fdp   = DotLayout("fdp")
   val sfdp  = DotLayout("sfdp")
+  val patchwork  = DotLayout("patchwork")
 
   val allLayouts = Seq(
-    dot, neato, twopi, circo, fdp, sfdp
+    dot, neato, twopi, circo, fdp, sfdp, patchwork
   )
 }
